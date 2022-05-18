@@ -12,8 +12,11 @@ import android.widget.FrameLayout
      * Queen checker can move and beat in forward and backward in one cell diagonally
      */
 
-
 class GameActivity : AppCompatActivity() {
+
+    /*
+     * Entry point in GameActivity.
+     */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,4 +25,5 @@ class GameActivity : AppCompatActivity() {
         Board().startGame(container)
         Game().makePlayerTurn(container)
     }
+
 }

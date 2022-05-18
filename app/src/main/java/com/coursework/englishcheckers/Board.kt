@@ -6,18 +6,18 @@ import android.widget.FrameLayout
 var board = mutableMapOf<String, BoardCell>()
 var checkersOnBoard = mutableMapOf<String, Checker?>()
 
-class Board {
+val cellToLetter = listOf(
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g',
+    'h'
+)
 
-    private val cellToLetter = listOf(
-        'a',
-        'b',
-        'c',
-        'd',
-        'e',
-        'f',
-        'g',
-        'h'
-    )
+class Board {
 
     /*
      * Call all functions to start the game.

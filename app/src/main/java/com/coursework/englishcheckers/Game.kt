@@ -51,6 +51,8 @@ class Game {
 
                                     prevCellName = Converter().positionToString(fromCell.first, fromCell.second)
 
+                                    possibleFurtherMoveForDefaultChecker(prevCellName, checkersOnBoard[prevCellName]?.getColorChecker())
+
                                 }
                             }
 
@@ -85,8 +87,10 @@ class Game {
 
                                         }
                                     } else {
-                                        container.findViewWithTag<ImageView>(prevCellName).translationX = Converter().coordinateToCell(fromX, fromY).first.toFloat()
-                                        container.findViewWithTag<ImageView>(prevCellName).translationY = Converter().coordinateToCell(fromX, fromY).second.toFloat()
+                                        container.findViewWithTag<ImageView>(prevCellName).translationX =
+                                            Converter().coordinateToCell(fromX, fromY).first.toFloat()
+                                        container.findViewWithTag<ImageView>(prevCellName).translationY =
+                                            Converter().coordinateToCell(fromX, fromY).second.toFloat()
                                     }
                                     isHoldingOnChecker = false
                                 }
@@ -97,6 +101,62 @@ class Game {
                 }
             })
     }
+
+    /*
+     * Check possible further move for default checker.
+     */
+
+    private fun possibleFurtherMoveForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): Pair<String, String> {
+
+        val letter = Converter().cellNameSeparate(chosenCheckerCellName).first
+        val integer = Converter().cellNameSeparate(chosenCheckerCellName).second
+
+        var posLetter = ' '
+        var posIntRight = 0
+        var posIntLeft = 0
+
+        when (colorChecker) {
+
+            1 -> {
+                if (letter != 'a') {
+                    posLetter = cellToLetter[(cellToLetter.indexOf(letter) - 1)]
+                    when (integer) {
+                        in 2..7 -> {
+                            posIntRight = integer + 1
+                            posIntLeft = integer - 1
+                        }
+                        1 -> {
+                            posIntRight = integer + 1
+                        }
+                        8 -> {
+                            posIntLeft = integer - 1
+                        }
+                    }
+                }
+            }
+
+            2 -> {
+                if (letter != 'h') {
+                    posLetter = cellToLetter[(cellToLetter.indexOf(letter) + 1)]
+                    when (integer) {
+                        in 2..7 -> {
+                            posIntRight = integer + 1
+                            posIntLeft = integer - 1
+                        }
+                        1 -> {
+                            posIntRight = integer + 1
+                        }
+                        8 -> {
+                            posIntLeft = integer - 1
+                        }
+                    }
+                }
+            }
+        }
+        //println("$posLetter$posIntLeft" to "$posLetter$posIntRight")
+        return "$posLetter$posIntLeft" to "$posLetter$posIntRight"
+    }
+
 
     /*
      * Check if cell is empty.

@@ -22,6 +22,7 @@ val mapCellListY = mapOf(
 )
 
 
+
 class Converter {
 
     private var isRightPlace = false
@@ -58,8 +59,8 @@ class Converter {
     }
 
     /*
-    * Convert x and y to string format by cells.
-    */
+     * Convert x and y to string format by cells.
+     */
 
     fun positionToString(x: Int, y: Int): String {
         var letter = ' '
@@ -87,5 +88,15 @@ class Converter {
         }
         return "$letter$int"
     }
+
+    /*
+     * Convert cell name to char and int.
+     */
+
+    fun cellNameSeparate(cellName: String): Pair<Char, Int> {
+        cellName.toCharArray()
+        return cellName.toCharArray().first() to cellName.toCharArray().last().digitToInt()
+    }
+
 
 }

@@ -10,6 +10,11 @@ class Checker(
     private var pos: String
 ) {
 
+    /*
+     * 1 - Red checker
+     * 2 - White checker
+     */
+
     fun getColorChecker(): Int {
         return this.color
     }
