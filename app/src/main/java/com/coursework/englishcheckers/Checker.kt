@@ -34,16 +34,16 @@ class Checker(
 
     fun draw(container:View, x: Int, y: Int): ImageView {
         return ImageView(container.context).apply {
-            if (color == 1 && !queen) {
+            if (color == 2 && !queen) {
                 this.setImageResource(R.drawable.checker_white)
             }
-            if (color == 2 && !queen) {
+            if (color == 1 && !queen) {
                 this.setImageResource(R.drawable.checker_red)
             }
-            if (color == 1 && queen) {
+            if (color == 2 && queen) {
                 this.setImageResource(R.drawable.checker_white_queen)
             }
-            if (color == 2 && queen) {
+            if (color == 1 && queen) {
                 this.setImageResource(R.drawable.checker_red_queen)
             }
             this.tag = pos

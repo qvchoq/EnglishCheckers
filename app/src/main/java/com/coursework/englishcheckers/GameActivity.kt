@@ -60,7 +60,7 @@ class GameActivity : AppCompatActivity() {
 
     var fromX = 0
     var fromY = 0
-    var fromCellName = ""
+    var prevCellName = ""
 
     private var turnFirstPlayer = true
     private var isHoldingOnChecker = false
@@ -107,7 +107,7 @@ class GameActivity : AppCompatActivity() {
                                     fromY = y
                                     val fromCell = convertCoordinateToCell(fromX, fromY)
 
-                                    fromCellName = convertPositionToString(fromCell.first, fromCell.second)
+                                    prevCellName = convertPositionToString(fromCell.first, fromCell.second)
 
                                 }
                             }
@@ -116,42 +116,40 @@ class GameActivity : AppCompatActivity() {
                                 if (isHoldingOnChecker) {
                                     println("MOVE")
 
-                                    container.findViewWithTag<ImageView>(fromCellName).translationX = (event.x - origin)
-                                    container.findViewWithTag<ImageView>(fromCellName).translationY = (event.y - origin)
+                                    container.findViewWithTag<ImageView>(prevCellName).translationX = (event.x - origin)
+                                    container.findViewWithTag<ImageView>(prevCellName).translationY = (event.y - origin)
                                 }
                             }
 
                             MotionEvent.ACTION_UP -> {
-                                if (isHoldingOnChecker) {
-
-
-
+                                if (isHoldingOnChecker ) {
                                     println("UP")
 
                                     val newPosX = convertCoordinateToCell(event.x.toInt(), event.y.toInt()).first
                                     val newPosY = convertCoordinateToCell(event.x.toInt(), event.y.toInt()).second
-                                    val newPosName = convertPositionToString(newPosX, newPosY)
+                                    val newCellName = convertPositionToString(newPosX, newPosY)
 
-                                    container.findViewWithTag<ImageView>(fromCellName).translationX =
-                                        convertCoordinateToCell(event.x.toInt(), event.y.toInt()).first.toFloat()
-                                    container.findViewWithTag<ImageView>(fromCellName).translationY =
-                                        convertCoordinateToCell(event.x.toInt(), event.y.toInt()).second.toFloat()
+                                    if (checkEmptyCell(newCellName) && board[newCellName]?.getTurnInfo() == true) {
 
-                                    if (newPosName != fromCellName) {
-                                        changePosToChecker(newPosName, fromCellName)
+                                        container.findViewWithTag<ImageView>(prevCellName).translationX =
+                                            convertCoordinateToCell(event.x.toInt(), event.y.toInt()).first.toFloat()
+                                        container.findViewWithTag<ImageView>(prevCellName).translationY =
+                                            convertCoordinateToCell(event.x.toInt(), event.y.toInt()).second.toFloat()
+
+                                        if (newCellName != prevCellName) {
+
+                                            changePosToChecker(newCellName, prevCellName)
+                                            changeCellColor(newCellName, prevCellName)
+
+                                        }
+                                    } else {
+                                        container.findViewWithTag<ImageView>(prevCellName).translationX = convertCoordinateToCell(fromX, fromY).first.toFloat()
+                                        container.findViewWithTag<ImageView>(prevCellName).translationY = convertCoordinateToCell(fromX, fromY).second.toFloat()
                                     }
-
                                     isHoldingOnChecker = false
                                 }
                             }
-
-
                         }
-                        /*
-                            Method to return checker to backside
-                            container.findViewWithTag<ImageView>("a2").translationX = (event.x - originX) / convertCoordinateToCell(x, y).first.toFloat()
-                            container.findViewWithTag<ImageView>("a2").translationY = (event.y - originY) / convertCoordinateToCell(x, y).second.toFloat()
-                         */
                     }
                     return true
                 }
@@ -194,7 +192,7 @@ class GameActivity : AppCompatActivity() {
      */
 
     private fun checkEmptyCell(pos: String): Boolean {
-        return (board[pos]?.getColor() == 0)
+        return (board[pos]?.getColorInfo() == 0)
     }
 
     /*
@@ -254,10 +252,10 @@ class GameActivity : AppCompatActivity() {
                 y = 1100
             }
             for (q in 0..3) {
-                val checker = Checker(2, false, convertPositionToString(x, y))
+                val checker = Checker(1, false, convertPositionToString(x, y))
                 runOnUiThread {
                     container.addView(checker.draw(container, x, y))
-                    //println("${positionToString(x, y)} white")
+                    //println("${convertPositionToString(x, y)} red")
                 }
                 checkersOnBoard[convertPositionToString(x,y)] = checker
                 x += 260
@@ -283,10 +281,10 @@ class GameActivity : AppCompatActivity() {
                 y = 710
             }
             for (q in 0..3) {
-                val checker = Checker(1, false, convertPositionToString(x, y))
+                val checker = Checker(2, false, convertPositionToString(x, y))
                 runOnUiThread {
                     container.addView(checker.draw(container, x, y))
-                    //println("${positionToString(x, y)} red")
+                    //println("${convertPositionToString(x, y)} white")
                 }
                 checkersOnBoard[convertPositionToString(x,y)] = checker
                 x += 260
@@ -330,16 +328,30 @@ class GameActivity : AppCompatActivity() {
      */
 
     private fun placeCellsOnBoard() {
-        var nameCell = ""
-        var colorChecker = 0
-        val cell = BoardCell(nameCell, colorChecker, false, false)
+        var nameCell: String
+        var turnCell = false
+        var colorChecker: Int
         for (x in 0..7) {
             for (y in 0..7) {
                 nameCell = "${cellToLetter[y]}${x + 1}"
+
                 if (checkersOnBoard[nameCell]?.getPosChecker()  == nameCell) {
                     colorChecker = checkersOnBoard[nameCell]!!.getColorChecker()
+                } else {
+                    colorChecker = 0
                 }
-                board[nameCell] = cell
+
+                if ((x + 1) % 2 == 0) {
+                    turnCell = (y + 1) % 2 != 0
+                }
+
+                if ((x + 1) % 2 != 0) {
+                    turnCell = (y + 1) % 2 == 0
+                }
+
+                board[nameCell] = BoardCell(nameCell, turnCell, colorChecker,false, false)
+
+                //println("name: $nameCell black: ${board[nameCell]?.getTurnInfo()}")
             }
         }
     }
@@ -348,8 +360,9 @@ class GameActivity : AppCompatActivity() {
      * Update info about checker on cell after move action.
      */
 
-    private fun refreshCellInfo() {
-        TODO()
+    private fun changeCellColor(newCellName: String, prevCellName: String) {
+        checkersOnBoard[newCellName]?.getColorChecker()?.let { board[newCellName]?.setColor(it) }
+        board[prevCellName]?.setColor(0)
     }
 
     /*

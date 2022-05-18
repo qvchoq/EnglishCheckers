@@ -2,6 +2,7 @@ package com.coursework.englishcheckers
 
 class BoardCell(
     val nameCell: String,
+    val turnCell: Boolean,
     var colorChecker: Int,
     var queenOnBoard: Boolean,
     var highlightedCell: Boolean
@@ -13,7 +14,11 @@ class BoardCell(
      * 2 - White checker
      */
 
-    fun getColor(): Int {
+    fun setColor(color: Int) {
+        this.colorChecker = color
+    }
+
+    fun getColorInfo(): Int {
         return this.colorChecker
     }
 
@@ -25,6 +30,8 @@ class BoardCell(
         return this.queenOnBoard
     }
 
-
+    fun getTurnInfo(): Boolean {
+        return this.turnCell
+    }
 
 }
