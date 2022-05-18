@@ -48,8 +48,6 @@ class Checker(
             }
             this.tag = pos
             this.layoutParams = FrameLayout.LayoutParams(110,110)
-            //(this.layoutParams as FrameLayout.LayoutParams).leftMargin = x
-            //(this.layoutParams as FrameLayout.LayoutParams).topMargin = y
             this.translationX = x.toFloat()
             this.translationY = y.toFloat()
         }

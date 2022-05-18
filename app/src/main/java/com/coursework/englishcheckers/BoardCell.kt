@@ -1,11 +1,11 @@
 package com.coursework.englishcheckers
 
 class BoardCell(
-    val nameCell: String,
-    val turnCell: Boolean,
-    var colorChecker: Int,
-    var queenOnBoard: Boolean,
-    var highlightedCell: Boolean
+    private val nameCell: String,
+    private val turnCell: Boolean,
+    private var colorChecker: Int,
+    private var queenOnBoard: Boolean,
+    private var highlightedCell: Boolean
 ) {
 
     /*
