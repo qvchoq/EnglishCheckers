@@ -5,6 +5,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 
 class Game {
 
@@ -17,6 +18,11 @@ class Game {
     private var prevCellName = ""
 
     private var isHoldingOnChecker = false
+
+    private var playerTurn = 1
+
+    private var hasBeat = false
+    private var hasMoved = false
 
     /*
      * Move checker and do a turn by player.
@@ -51,17 +57,24 @@ class Game {
 
                                     prevCellName = Converter().positionToString(fromCell.first, fromCell.second)
 
-                                    possibleFurtherMoveForDefaultChecker(prevCellName, checkersOnBoard[prevCellName]?.getColorChecker())
+                                    //println(possibleFurtherMoveForDefaultChecker(prevCellName, checkersOnBoard[prevCellName]?.getColorChecker()))
+
+                                    defaultCheckerNeedToBeat(checkersOnBoard[prevCellName]?.getColorChecker())
 
                                 }
                             }
 
                             MotionEvent.ACTION_MOVE -> {
                                 if (isHoldingOnChecker) {
-                                    println("MOVE")
 
-                                    container.findViewWithTag<ImageView>(prevCellName).translationX = (event.x - origin)
-                                    container.findViewWithTag<ImageView>(prevCellName).translationY = (event.y - origin)
+                                    if (playerTurn == checkersOnBoard[prevCellName]?.getColorChecker()) {
+
+                                        container.findViewWithTag<ImageView>(prevCellName).translationX =
+                                            (event.x - origin)
+                                        container.findViewWithTag<ImageView>(prevCellName).translationY =
+                                            (event.y - origin)
+
+                                    }
                                 }
                             }
 
@@ -73,26 +86,40 @@ class Game {
                                     val newPosY = Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).second
                                     val newCellName = Converter().positionToString(newPosX, newPosY)
 
-                                    if (checkEmptyCell(newCellName) && board[newCellName]?.getTurnInfo() == true) {
+                                    if (playerTurn == checkersOnBoard[prevCellName]?.getColorChecker()) {
 
-                                        container.findViewWithTag<ImageView>(prevCellName).translationX =
-                                            Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).first.toFloat()
-                                        container.findViewWithTag<ImageView>(prevCellName).translationY =
-                                            Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).second.toFloat()
+                                        if (checkEmptyCell(newCellName) && board[newCellName]?.getTurnInfo() == true) {
 
-                                        if (newCellName != prevCellName) {
+                                            container.findViewWithTag<ImageView>(prevCellName).translationX =
+                                                Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).first.toFloat()
+                                            container.findViewWithTag<ImageView>(prevCellName).translationY =
+                                                Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).second.toFloat()
 
-                                            changePosToChecker(container, newCellName, prevCellName)
-                                            changeCellColor(newCellName, prevCellName)
+                                            if (newCellName != prevCellName) {
 
+                                                changePosToChecker(container, newCellName, prevCellName)
+                                                changeCellColor(newCellName, prevCellName)
+                                                hasMoved = true
+                                            }
+
+                                        } else {
+                                            container.findViewWithTag<ImageView>(prevCellName).translationX =
+                                                Converter().coordinateToCell(fromX, fromY).first.toFloat()
+                                            container.findViewWithTag<ImageView>(prevCellName).translationY =
+                                                Converter().coordinateToCell(fromX, fromY).second.toFloat()
                                         }
-                                    } else {
-                                        container.findViewWithTag<ImageView>(prevCellName).translationX =
-                                            Converter().coordinateToCell(fromX, fromY).first.toFloat()
-                                        container.findViewWithTag<ImageView>(prevCellName).translationY =
-                                            Converter().coordinateToCell(fromX, fromY).second.toFloat()
+
+                                        defaultCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColorChecker())
+                                        println("hasBeat : $hasBeat")
+                                        if (!hasBeat && hasMoved) {
+                                            if (playerTurn == 1) playerTurn = 2 else playerTurn = 1
+                                            determineWhoseTurn(container)
+                                        }
+
+                                        println("TURN PLAYER : $playerTurn")
+                                        hasMoved = false
+                                        isHoldingOnChecker = false
                                     }
-                                    isHoldingOnChecker = false
                                 }
                             }
                         }
@@ -157,6 +184,123 @@ class Game {
         return "$posLetter$posIntLeft" to "$posLetter$posIntRight"
     }
 
+    /*
+     * Check default checker need to beat.
+     */
+
+    private fun defaultCheckerNeedToBeat(colorChecker: Int?) {
+
+        var possibleMoves: Pair<String, String>
+
+        var possibleMoveLetter: Char
+        var possibleMoveInteger: Int
+
+        var checkLetter: Char
+        var checkInteger: Int
+
+        var move: String
+
+        for (checkerOnBoardName in checkersOnBoard.keys) {
+
+            //For checking checker only who making turn.
+            if (checkersOnBoard[checkerOnBoardName]?.getColorChecker() == colorChecker) {
+
+                possibleMoves = possibleFurtherMoveForDefaultChecker(checkerOnBoardName, colorChecker)
+
+                if (colorChecker == 1) {
+
+                    if (!checkerOnBoardName.contains('1') && !checkerOnBoardName.contains('2') && !checkerOnBoardName.contains('a')) {
+
+                        if (board[possibleMoves.first]?.getColorInfo() == 2) {
+
+                            possibleMoveLetter = Converter().cellNameSeparate(possibleMoves.first).first
+                            possibleMoveInteger = Converter().cellNameSeparate(possibleMoves.first).second
+
+                            if (possibleMoveLetter != 'a' && possibleMoveInteger != 1) {
+
+                                checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) - 1]
+                                checkInteger = possibleMoveInteger - 1
+                                move = "$checkLetter$checkInteger"
+
+                                if (board[move]?.getColorInfo() == 0) {
+                                    println("(${board[possibleMoves.first]?.getColorInfo()}) NEED TO BEAT left from $checkerOnBoardName to $move")
+                                }
+
+                            }
+                        }
+                    }
+
+                    if (!checkerOnBoardName.contains('7') && !checkerOnBoardName.contains('8') && !checkerOnBoardName.contains('a')) {
+
+                        if (board[possibleMoves.second]?.getColorInfo() == 2) {
+
+                            possibleMoveLetter = Converter().cellNameSeparate(possibleMoves.second).first
+                            possibleMoveInteger = Converter().cellNameSeparate(possibleMoves.second).second
+
+                            if (possibleMoveLetter != 'a' && possibleMoveInteger != 8) {
+
+                                checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) - 1]
+                                checkInteger = possibleMoveInteger + 1
+                                move = "$checkLetter$checkInteger"
+
+                                if (board[move]?.getColorInfo() == 0) {
+                                    println("(${board[possibleMoves.second]?.getColorInfo()}) NEED TO BEAT right from $checkerOnBoardName to $move")
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                if (colorChecker == 2) {
+
+                    if (!checkerOnBoardName.contains('1') && !checkerOnBoardName.contains('2') && !checkerOnBoardName.contains('h')) {
+
+                        if (board[possibleMoves.first]?.getColorInfo() == 1) {
+
+                            possibleMoveLetter = Converter().cellNameSeparate(possibleMoves.first).first
+                            possibleMoveInteger = Converter().cellNameSeparate(possibleMoves.first).second
+
+                            if (possibleMoveLetter != 'h' && possibleMoveInteger != 8) {
+
+                                checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) + 1]
+                                checkInteger = possibleMoveInteger - 1
+                                move = "$checkLetter$checkInteger"
+
+                                if (board[move]?.getColorInfo() == 0) {
+                                    println("(${board[possibleMoves.first]?.getColorInfo()}) NEED TO BEAT left from $checkerOnBoardName to $move")
+                                }
+
+                            }
+                        }
+                    }
+
+                    if (!checkerOnBoardName.contains('7') && !checkerOnBoardName.contains('8') && !checkerOnBoardName.contains('h')) {
+
+                        if (board[possibleMoves.second]?.getColorInfo() == 1) {
+
+                            possibleMoveLetter = Converter().cellNameSeparate(possibleMoves.second).first
+                            possibleMoveInteger = Converter().cellNameSeparate(possibleMoves.second).second
+
+                            if (possibleMoveLetter != 'h' && possibleMoveInteger != 1) {
+
+                                checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) + 1]
+                                checkInteger = possibleMoveInteger + 1
+                                move = "$checkLetter$checkInteger"
+
+                                if (board[move]?.getColorInfo() == 0) {
+                                    println("(${board[possibleMoves.second]?.getColorInfo()}) NEED TO BEAT right from $checkerOnBoardName to $move")
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
 
     /*
      * Check if cell is empty.
@@ -175,7 +319,6 @@ class Game {
         var intY = 0
         var xIsRightPlace = false
         var yIsRightPlace = false
-        var clickOnChecker = false
 
 
         for ((key, value) in mapCellListX) {
@@ -192,8 +335,7 @@ class Game {
 
             }
         }
-        clickOnChecker = xIsRightPlace && yIsRightPlace && (checkersOnBoard[Converter().positionToString(intX, intY)] != null)
-        return clickOnChecker
+        return xIsRightPlace && yIsRightPlace && (checkersOnBoard[Converter().positionToString(intX, intY)] != null)
     }
 
     /*
@@ -217,10 +359,26 @@ class Game {
      * Update checker position after move action.
      */
 
-    private fun changePosToChecker(container: FrameLayout,newPos: String, prevPos: String) {
+    private fun changePosToChecker(container: FrameLayout, newPos: String, prevPos: String) {
         checkersOnBoard[newPos] = checkersOnBoard[prevPos]
         checkersOnBoard[newPos]?.setPosChecker(container, newPos)
         checkersOnBoard.remove(prevPos)
+
+    }
+
+    /*
+     * Make turn.
+     */
+
+    private fun determineWhoseTurn(container: FrameLayout) {
+        val text: TextView = container.findViewById(R.id.turnText)
+        if (playerTurn == 1) {
+            text.text = "Turn Player 1"
+        }
+
+        if (playerTurn == 2) {
+            text.text = "Turn Player 2"
+        }
 
     }
 }
