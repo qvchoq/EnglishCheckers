@@ -15,11 +15,11 @@ class Checker(
      * 2 - White checker
      */
 
-    fun getColorChecker(): Int {
+    fun getColor(): Int {
         return this.color
     }
 
-    fun setQueenChecker(queen: Boolean) {
+    fun setQueen(queen: Boolean) {
         this.queen = queen
     }
 
@@ -27,11 +27,11 @@ class Checker(
         return this.queen
     }
 
-    fun getPosChecker(): String {
+    fun getPos(): String {
         return this.pos
     }
 
-    fun setPosChecker(container: FrameLayout, newPos: String) {
+    fun setPos(container: FrameLayout, newPos: String) {
         val imageViewChecker: ImageView = container.findViewWithTag(this.pos)
         this.pos = newPos
         imageViewChecker.tag = newPos

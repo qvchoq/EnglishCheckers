@@ -1,11 +1,17 @@
 package com.coursework.englishcheckers
 
+import android.app.Activity
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.ImageView
+import androidx.fragment.app.FragmentManager
+
 class BoardCell(
     private val nameCell: String,
     private val turnCell: Boolean,
     private var colorChecker: Int,
     private var queenOnBoard: Boolean,
-    private var highlightedCell: Boolean
+    private var highlighted: Boolean
 ) {
 
     /*
@@ -33,5 +39,14 @@ class BoardCell(
     fun getTurnInfo(): Boolean {
         return this.turnCell
     }
+
+    fun setHighlight(highlight: Boolean) {
+        this.highlighted = highlight
+    }
+
+    fun getHighlightInfo(): Boolean {
+        return this.highlighted
+    }
+
 
 }

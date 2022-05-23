@@ -53,7 +53,7 @@ class Converter {
             }
         }
 
-        isRightPlace = xIsRightPlace && yIsRightPlace && (checkersOnBoard[positionToString(intX, intY)] != null)
+        isRightPlace = xIsRightPlace && yIsRightPlace && (checkersOnBoard[coordinateToCellName(intX, intY)] != null)
 
         return Pair(intX, intY)
     }
@@ -62,7 +62,7 @@ class Converter {
      * Convert x and y to string format by cells.
      */
 
-    fun positionToString(x: Int, y: Int): String {
+    fun coordinateToCellName(x: Int, y: Int): String {
         var letter = ' '
         var int = 0
         when (y) {
@@ -90,6 +90,40 @@ class Converter {
     }
 
     /*
+     * Cell name to coordinate XY.
+     */
+
+    fun cellNameToCoordinate(cellName: String): Pair<Int, Int> {
+        var x = 0
+        var y = 0
+
+        when (cellNameSeparate(cellName).second) {
+            1 -> x = 30
+            2 -> x = 160
+            3 -> x = 290
+            4 -> x = 420
+            5 -> x = 550
+            6 -> x = 680
+            7 -> x = 810
+            8 -> x = 940
+        }
+
+        when (cellNameSeparate(cellName).first) {
+            'a' -> y = 450
+            'b' -> y = 580
+            'c' -> y = 710
+            'd' -> y = 840
+            'e' -> y = 970
+            'f' -> y = 1100
+            'g' -> y = 1230
+            'h' -> y = 1360
+
+        }
+
+        return x to y
+    }
+
+    /*
      * Convert cell name to char and int.
      */
 
@@ -97,6 +131,9 @@ class Converter {
         cellName.toCharArray()
         return cellName.toCharArray().first() to cellName.toCharArray().last().digitToInt()
     }
+
+
+
 
 
 }

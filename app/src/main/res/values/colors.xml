@@ -10,4 +10,5 @@
     <color name="bright_yellow">#F2E992</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
+    <color name="lime">#66FF00</color>
 </resources>
