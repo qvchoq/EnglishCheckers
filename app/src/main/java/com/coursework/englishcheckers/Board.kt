@@ -129,8 +129,8 @@ class Board {
             this.tag = cellName+'h'
             this.setImageResource(R.drawable.highlight)
             this.layoutParams = FrameLayout.LayoutParams(130,130)
-            this.translationX = Converter().cellNameToCoordinate(cellName).first.toFloat() - 11
-            this.translationY = Converter().cellNameToCoordinate(cellName).second.toFloat() - 11
+            this.translationX = Converter().cellNameToCoordinate(cellName).first.toFloat() - 12
+            this.translationY = Converter().cellNameToCoordinate(cellName).second.toFloat() - 12
         }
 
         (container.context as Activity).runOnUiThread {
