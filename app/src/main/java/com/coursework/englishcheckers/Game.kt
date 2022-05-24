@@ -45,230 +45,235 @@ class Game {
 
         val origin = (1040 - boardSize) / 2f
 
-        container.setOnTouchListener(
-            object: View.OnTouchListener {
+        container.setOnTouchListener { _, event ->
+            x = (event!!.x).toInt()
+            y = (event.y).toInt()
 
-                override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+            if (touchOnBoard(x, y)) {
+                when (event.action) {
 
-                    x = (event!!.x).toInt()
-                    y = (event.y).toInt()
+                    MotionEvent.ACTION_DOWN -> {
 
-                    if (touchOnBoard(x, y)) {
-                        when (event.action) {
+                        if (touchOnChecker(x, y)) {
+                            isHoldingOnChecker = true
+                            fromX = x
+                            fromY = y
 
-                            MotionEvent.ACTION_DOWN -> {
-                                if (touchOnChecker(x, y)) {
+                            val fromCell = Converter().coordinateToCell(fromX, fromY)
 
-                                    isHoldingOnChecker = true
-                                    fromX = x
-                                    fromY = y
+                            prevCellName = Converter().coordinateToCellName(fromCell.first, fromCell.second)
 
-                                    val fromCell = Converter().coordinateToCell(fromX, fromY)
+                            //We check the need to beat.
+                            defaultCheckerNeedToBeat(checkersOnBoard[prevCellName]?.getColor())
 
-                                    prevCellName = Converter().coordinateToCellName(fromCell.first, fromCell.second)
+                            multiplyBeat = needToBeatMap[prevCellName] != null
 
-                                    //We check the need to beat.
-                                    defaultCheckerNeedToBeat(checkersOnBoard[prevCellName]?.getColor())
+                            //We highlight the cells of the moves of the player who walks.
+                            if (playerTurn == checkersOnBoard[prevCellName]?.getColor()) {
 
-                                    multiplyBeat = needToBeatMap[prevCellName] != null
+                                if (needToBeatMap.isNotEmpty()) {
 
-                                    //We highlight the cells of the moves of the player who walks.
-                                    if (playerTurn == checkersOnBoard[prevCellName]?.getColor()) {
-
-                                        if (needToBeatMap.isNotEmpty()) {
-
-                                            for (key in needToBeatMap.keys) {
+                                    for (key in needToBeatMap.keys) {
 
 
-                                                //Highlight the players move.
-                                                if (checkersOnBoard[key]?.getColor() == playerTurn) {
+                                        //Highlight the players move.
+                                        if (checkersOnBoard[key]?.getColor() == playerTurn) {
 
-                                                    //We highlight the necessary cells for beating.
-                                                    if (needToBeatMap[key] != null) {
+                                            //We highlight the necessary cells for beating.
+                                            if (needToBeatMap[key] != null) {
 
-                                                        //If the selected cell is not already highlighted.
-                                                        if (board[needToBeatMap[key]]?.getHighlightInfo() == false) {
+                                                //If the selected cell is not already highlighted.
+                                                if (board[needToBeatMap[key]]?.getHighlightInfo() == false) {
 
-                                                            needToBeatMap[key]?.let { Board().setHighlightCell(container, it) }
-
-                                                        }
-
-                                                    }
+                                                    needToBeatMap[key]?.let { Board().setHighlightCell(container, it) }
 
                                                 }
 
-                                            }
-
-                                        } else {
-                                            possibleMoves[prevCellName] = possibleMoveForDefaultChecker(prevCellName, playerTurn)
-                                            for ((_, moveList) in possibleMoves) {
-                                                for (move in moveList) {
-                                                    //We highlight the cells of a possible move, if you do not need to beat.
-                                                    Board().setHighlightCell(container, move)
-                                                }
                                             }
 
                                         }
 
                                     }
 
+                                } else {
+                                    possibleMoves[prevCellName] =
+                                        possibleMoveForDefaultChecker(prevCellName, playerTurn)
+                                    for ((_, moveList) in possibleMoves) {
+                                        for (move in moveList) {
+                                            //We highlight the cells of a possible move, if you do not need to beat.
+                                            Board().setHighlightCell(container, move)
+                                        }
+                                    }
+
                                 }
+
                             }
 
-                            MotionEvent.ACTION_MOVE -> {
-                                if (isHoldingOnChecker) {
+                        }
+                    }
 
-                                    if (playerTurn == checkersOnBoard[prevCellName]?.getColor()) {
+                    MotionEvent.ACTION_MOVE -> {
+                        if (isHoldingOnChecker) {
 
-                                        container.findViewWithTag<ImageView>(prevCellName).translationX =
-                                            (event.x - origin)
-                                        container.findViewWithTag<ImageView>(prevCellName).translationY =
-                                            (event.y - origin)
+                            if (playerTurn == checkersOnBoard[prevCellName]?.getColor()) {
 
-                                    }
-                                }
-                            }
+                                container.findViewWithTag<ImageView>(prevCellName).translationX =
+                                    (event.x - origin)
+                                container.findViewWithTag<ImageView>(prevCellName).translationY =
+                                    (event.y - origin)
 
-                            MotionEvent.ACTION_UP -> {
-                                if (isHoldingOnChecker ) {
-
-                                    val newPosX = Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).first
-                                    val newPosY = Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).second
-                                    val newCellName = Converter().coordinateToCellName(newPosX, newPosY)
-
-                                    var nextStepCondition = false
-
-                                    //If the players move (1 - red, 2 - white) matches the color of the selected checker.
-                                    if (playerTurn == checkersOnBoard[prevCellName]?.getColor()) {
-
-                                        //If there are checkers of the walking player in the collection "needToBeat", then it is necessary to make a move of them.
-                                        for (key in needToBeatMap.keys) {
-                                            if (checkersOnBoard.contains(key)) {
-                                                needToBeatNow = true
-                                                if (key == prevCellName) {
-
-                                                    nextStepCondition = true
-
-                                                }
-                                                //The cell to move to.
-                                                needToBeatMap[key]?.let { neededToMoveList.add(it) }
-                                            }
-                                         }
-
-                                        if (nextStepCondition) {
-
-                                            //If the cell where you need to move to beat matches the cell where we put, then move.
-                                            if (neededToMoveList.contains(newCellName) && needToBeatMap[prevCellName] == newCellName) {
-
-                                                val beatenChecker = getCellBetweenTwo(prevCellName, newCellName)
-
-                                                container.findViewWithTag<ImageView>(prevCellName).translationX =
-                                                    Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).first.toFloat()
-                                                container.findViewWithTag<ImageView>(prevCellName).translationY =
-                                                    Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).second.toFloat()
-
-                                                hasBeat = true
-                                                needToBeatMap = mutableMapOf()
-
-
-                                                //We delete the beaten checker and update the information.
-                                                container.removeView(container.findViewWithTag(beatenChecker))
-                                                board[beatenChecker]?.setColor(0)
-                                                checkersOnBoard.remove(beatenChecker)
-
-
-                                                changePosToChecker(container, newCellName, prevCellName)
-                                                changeCellColor(newCellName, prevCellName)
-
-                                                hasMoved = true
-
-                                            } else {
-
-                                                container.findViewWithTag<ImageView>(prevCellName).translationX =
-                                                    Converter().coordinateToCell(fromX, fromY).first.toFloat()
-                                                container.findViewWithTag<ImageView>(prevCellName).translationY =
-                                                    Converter().coordinateToCell(fromX, fromY).second.toFloat()
-
-                                            }
-
-                                        //If there is no need to beat.
-                                        } else if (board[newCellName]?.getHighlightInfo() == true && !needToBeatNow && possibleMoves.containsKey(prevCellName)) {
-                                            container.findViewWithTag<ImageView>(prevCellName).translationX =
-                                                Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).first.toFloat()
-                                            container.findViewWithTag<ImageView>(prevCellName).translationY =
-                                                Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).second.toFloat()
-
-                                            hasBeat = false
-
-                                            if (newCellName != prevCellName) {
-
-                                                changePosToChecker(container, newCellName, prevCellName)
-                                                changeCellColor(newCellName, prevCellName)
-                                                hasMoved = true
-
-                                            }
-
-                                        } else {
-
-                                            container.findViewWithTag<ImageView>(prevCellName).translationX =
-                                                Converter().coordinateToCell(fromX, fromY).first.toFloat()
-                                            container.findViewWithTag<ImageView>(prevCellName).translationY =
-                                                Converter().coordinateToCell(fromX, fromY).second.toFloat()
-                                        }
-
-                                        //After beat the checker, detect new possible beat moves.
-                                        if (multiplyBeat && hasBeat) {
-
-                                            defaultCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColor())
-
-                                            if (!needToBeatMap.containsKey(newCellName)) {
-                                                needToBeatNow = false
-                                            }
-
-                                        }
-
-                                        if (!needToBeatNow) {
-
-                                            if (hasMoved) {
-
-                                                playerTurn = if (playerTurn == 1) 2 else 1
-
-                                                determineWhoseTurn(container)
-
-                                            }
-                                        }
-
-
-                                        hasMoved = false
-                                        isHoldingOnChecker = false
-                                    }
-
-                                    if (needToBeatNow || hasBeat) {
-
-                                        //If you beat the checker, then we erase the highlight by the special collections.
-                                        for (move in neededToMoveList) {
-
-                                            //Remove cell highlight.
-                                            Board().removeHighlightCell(container, move)
-                                        }
-                                    } else {
-                                        for ((_, moveList) in possibleMoves) {
-                                            for (move in moveList) {
-                                                Board().removeHighlightCell(container, move)
-                                            }
-                                        }
-                                        possibleMoves = mutableMapOf()
-                                    }
-                                    hasBeat = false
-                                    needToBeatNow = false
-                                    neededToMoveList = mutableListOf()
-                                }
                             }
                         }
                     }
-                    return true
+
+                    MotionEvent.ACTION_UP -> {
+                        if (isHoldingOnChecker) {
+
+                            val newPosX = Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).first
+                            val newPosY = Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).second
+                            val newCellName = Converter().coordinateToCellName(newPosX, newPosY)
+
+                            var nextStepCondition = false
+
+                            //If the players move (1 - red, 2 - white) matches the color of the selected checker.
+                            if (playerTurn == checkersOnBoard[prevCellName]?.getColor()) {
+
+                                //If there are checkers of the walking player in the collection "needToBeat", then it is necessary to make a move of them.
+                                for (key in needToBeatMap.keys) {
+                                    if (checkersOnBoard.contains(key)) {
+                                        needToBeatNow = true
+                                        if (key == prevCellName) {
+
+                                            nextStepCondition = true
+
+                                        }
+                                        //The cell to move to.
+                                        needToBeatMap[key]?.let { neededToMoveList.add(it) }
+                                    }
+                                }
+
+                                if (nextStepCondition) {
+
+                                    //If the cell where you need to move to beat matches the cell where we put, then move.
+                                    if (neededToMoveList.contains(newCellName) && needToBeatMap[prevCellName] == newCellName) {
+
+                                        val beatenChecker = getCellBetweenTwo(prevCellName, newCellName)
+
+                                        container.findViewWithTag<ImageView>(prevCellName).translationX =
+                                            Converter().coordinateToCell(
+                                                event.x.toInt(),
+                                                event.y.toInt()
+                                            ).first.toFloat()
+                                        container.findViewWithTag<ImageView>(prevCellName).translationY =
+                                            Converter().coordinateToCell(
+                                                event.x.toInt(),
+                                                event.y.toInt()
+                                            ).second.toFloat()
+
+                                        hasBeat = true
+                                        needToBeatMap = mutableMapOf()
+
+
+                                        //We delete the beaten checker and update the information.
+                                        container.removeView(container.findViewWithTag(beatenChecker))
+                                        board[beatenChecker]?.setColor(0)
+                                        checkersOnBoard.remove(beatenChecker)
+
+
+                                        changePosToChecker(container, newCellName, prevCellName)
+                                        changeCellColor(newCellName, prevCellName)
+
+                                        hasMoved = true
+
+                                    } else {
+
+                                        container.findViewWithTag<ImageView>(prevCellName).translationX =
+                                            Converter().coordinateToCell(fromX, fromY).first.toFloat()
+                                        container.findViewWithTag<ImageView>(prevCellName).translationY =
+                                            Converter().coordinateToCell(fromX, fromY).second.toFloat()
+
+                                    }
+
+                                    //If there is no need to beat.
+                                } else if (board[newCellName]?.getHighlightInfo() == true && !needToBeatNow && possibleMoves.containsKey(
+                                        prevCellName
+                                    )
+                                ) {
+                                    container.findViewWithTag<ImageView>(prevCellName).translationX =
+                                        Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).first.toFloat()
+                                    container.findViewWithTag<ImageView>(prevCellName).translationY =
+                                        Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).second.toFloat()
+
+                                    hasBeat = false
+
+                                    if (newCellName != prevCellName) {
+
+                                        changePosToChecker(container, newCellName, prevCellName)
+                                        changeCellColor(newCellName, prevCellName)
+                                        hasMoved = true
+
+                                    }
+
+                                } else {
+
+                                    container.findViewWithTag<ImageView>(prevCellName).translationX =
+                                        Converter().coordinateToCell(fromX, fromY).first.toFloat()
+                                    container.findViewWithTag<ImageView>(prevCellName).translationY =
+                                        Converter().coordinateToCell(fromX, fromY).second.toFloat()
+                                }
+
+                                //After beat the checker, detect new possible beat moves.
+                                if (multiplyBeat && hasBeat) {
+
+                                    defaultCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColor())
+
+                                    if (!needToBeatMap.containsKey(newCellName)) {
+                                        needToBeatNow = false
+                                    }
+
+                                }
+
+                                if (!needToBeatNow) {
+
+                                    if (hasMoved) {
+
+                                        playerTurn = if (playerTurn == 1) 2 else 1
+
+                                        determineWhoseTurn(container)
+
+                                    }
+                                }
+
+
+                                hasMoved = false
+                                isHoldingOnChecker = false
+                            }
+
+                            if (needToBeatNow || hasBeat) {
+
+                                //If you beat the checker, then we erase the highlight by the special collections.
+                                for (move in neededToMoveList) {
+
+                                    //Remove cell highlight.
+                                    Board().removeHighlightCell(container, move)
+                                }
+                            } else {
+                                for ((_, moveList) in possibleMoves) {
+                                    for (move in moveList) {
+                                        Board().removeHighlightCell(container, move)
+                                    }
+                                }
+                                possibleMoves = mutableMapOf()
+                            }
+                            hasBeat = false
+                            needToBeatNow = false
+                            neededToMoveList = mutableListOf()
+                        }
+                    }
                 }
-            })
+            }
+            true
+        }
     }
 
     /*
@@ -506,7 +511,7 @@ class Game {
     }
 
     /*
-     * Check if there was a touch on the checker.
+     * Check if there was a touch on the player turn checker.
      */
 
     private fun touchOnChecker(x: Int, y: Int): Boolean {
@@ -530,7 +535,10 @@ class Game {
 
             }
         }
-        return xIsRightPlace && yIsRightPlace && (checkersOnBoard[Converter().coordinateToCellName(intX, intY)] != null)
+        return xIsRightPlace &&
+                yIsRightPlace &&
+                (checkersOnBoard[Converter().coordinateToCellName(intX, intY)] != null) &&
+                (checkersOnBoard[Converter().coordinateToCellName(intX, intY)]?.getColor() == playerTurn)
     }
 
     /*
