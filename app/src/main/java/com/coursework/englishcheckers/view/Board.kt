@@ -1,8 +1,12 @@
-package com.coursework.englishcheckers
+package com.coursework.englishcheckers.view
 
 import android.app.Activity
 import android.widget.FrameLayout
 import android.widget.ImageView
+import com.coursework.englishcheckers.R
+import com.coursework.englishcheckers.model.BoardCell
+import com.coursework.englishcheckers.model.Checker
+import com.coursework.englishcheckers.model.Converter
 
 var board = mutableMapOf<String, BoardCell>()
 var checkersOnBoard = mutableMapOf<String, Checker?>()
@@ -24,10 +28,9 @@ class Board {
      * Call all functions to start the game.
      */
 
-    fun startGame(container: FrameLayout) {
+    fun prepareViewsForGame(container: FrameLayout) {
         drawCheckersPlayerOne(container)
         drawCheckersPlayerTwo(container)
-        placeCellsOnBoard()
     }
 
     /*
@@ -87,38 +90,6 @@ class Board {
     }
 
     /*
-     * Create cells with information on board once.
-     */
-
-    private fun placeCellsOnBoard() {
-        var nameCell: String
-        var turnCell = false
-        var colorChecker: Int
-        for (x in 0..7) {
-            for (y in 0..7) {
-                nameCell = "${cellToLetter[y]}${x + 1}"
-
-                if (checkersOnBoard[nameCell]?.getPos()  == nameCell) {
-                    colorChecker = checkersOnBoard[nameCell]!!.getColor()
-                } else {
-                    colorChecker = 0
-                }
-
-                if ((x + 1) % 2 == 0) {
-                    turnCell = (y + 1) % 2 != 0
-                }
-
-                if ((x + 1) % 2 != 0) {
-                    turnCell = (y + 1) % 2 == 0
-                }
-
-                board[nameCell] = BoardCell(nameCell, turnCell, colorChecker,false, false)
-
-            }
-        }
-    }
-
-    /*
      * Draw a highlight shape.
      */
 
@@ -149,5 +120,22 @@ class Board {
         (container.context as Activity).runOnUiThread {
             container.removeView(container.findViewWithTag<ImageView>(cellName+'h'))
         }
+    }
+
+    /*
+     * Erase the default checker and place there queen checker.
+     */
+
+    fun replaceDefaultCheckerToQueen(container: FrameLayout, checkerName: String, x: Int, y: Int) {
+        val checker = checkersOnBoard[checkerName]
+
+        (container.context as Activity).runOnUiThread {
+            if (checker != null) {
+                container.removeView(container.findViewWithTag(checkerName))
+                container.addView(checker.draw(container, x, y))
+            }
+        }
+
+
     }
 }

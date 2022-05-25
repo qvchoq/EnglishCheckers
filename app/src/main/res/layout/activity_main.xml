@@ -4,16 +4,50 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
+        android:background="@color/beige"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".controller.MainActivity">
+
 
     <Button
             android:text="@string/startButtonText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="152dp"
+            android:layout_height="45dp"
             android:id="@+id/startButton"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+            android:text="@string/for_2_players"
+            android:layout_width="125dp"
+            android:autoSizeTextType="uniform"
+            android:layout_height="25dp"
+            android:textAlignment="center"
+            android:id="@+id/underGamePreview"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintBottom_toTopOf="@+id/startButton"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gamePreview"/>
+
+    <TextView
+            android:text="@string/english_checkers"
+            android:autoSizeTextType="uniform"
+            android:textAlignment="center"
+            android:layout_width="250dp"
+            android:layout_height="100dp"
+            android:id="@+id/gamePreview"
+            android:layout_marginTop="100dp"
+            app:layout_constraintBottom_toTopOf="@+id/startButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textStyle="bold"/>
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

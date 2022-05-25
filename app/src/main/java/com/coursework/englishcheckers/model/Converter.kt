@@ -1,4 +1,7 @@
-package com.coursework.englishcheckers
+package com.coursework.englishcheckers.model
+
+import com.coursework.englishcheckers.view.checkersOnBoard
+
 
 val mapCellListX = mapOf(
     30..159 to 30,

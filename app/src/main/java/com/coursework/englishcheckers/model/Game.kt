@@ -1,12 +1,16 @@
-package com.coursework.englishcheckers
+package com.coursework.englishcheckers.model
 
 import  android.annotation.SuppressLint
 import android.app.Activity
 import android.view.MotionEvent
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import com.coursework.englishcheckers.*
+import com.coursework.englishcheckers.view.Board
+import com.coursework.englishcheckers.view.board
+import com.coursework.englishcheckers.view.cellToLetter
+import com.coursework.englishcheckers.view.checkersOnBoard
 
 class Game {
 
@@ -22,15 +26,19 @@ class Game {
 
     private var playerTurn = 1
 
+    private var turnsWithoutBeating = 0
+    private var noPossibleMovesForPlayer = 0
+
     private var hasBeat = false
     private var hasMoved = false
-    private var multiplyBeat = false
     private var needToBeatNow = false
+    private var replacedToQueen = false
+
     private var needToBeatMap = mutableMapOf<String, String>()
 
     private var possibleMoves = mutableMapOf<String ,List<String>>()
 
-    private var neededToMoveList = mutableListOf<String>()
+    private var mustToMoveList = mutableListOf<String>()
 
 
     /*
@@ -38,7 +46,7 @@ class Game {
      */
 
     @SuppressLint("ClickableViewAccessibility")
-    fun makePlayerTurn(container: FrameLayout) {
+    fun mainMoveLogic(container: FrameLayout) {
 
         var x: Int
         var y: Int
@@ -65,18 +73,15 @@ class Game {
 
                             //We check the need to beat.
                             defaultCheckerNeedToBeat(checkersOnBoard[prevCellName]?.getColor())
+                            queenCheckerNeedToBeat(checkersOnBoard[prevCellName]?.getColor())
 
-                            multiplyBeat = needToBeatMap[prevCellName] != null
-
-                            //We highlight the cells of the moves of the player who walks.
+                            //We highlight the cells of the moves of the player whose turn is.
                             if (playerTurn == checkersOnBoard[prevCellName]?.getColor()) {
 
                                 if (needToBeatMap.isNotEmpty()) {
 
                                     for (key in needToBeatMap.keys) {
 
-
-                                        //Highlight the players move.
                                         if (checkersOnBoard[key]?.getColor() == playerTurn) {
 
                                             //We highlight the necessary cells for beating.
@@ -96,12 +101,19 @@ class Game {
                                     }
 
                                 } else {
-                                    possibleMoves[prevCellName] =
-                                        possibleMoveForDefaultChecker(prevCellName, playerTurn)
+                                    if (checkersOnBoard[prevCellName]?.getQueenInfo() == false) {
+                                        possibleMoves[prevCellName] =
+                                            possibleMovesForDefaultChecker(prevCellName, playerTurn)
+                                    } else {
+                                        possibleMoves[prevCellName] =
+                                            possibleMovesForQueenChecker(prevCellName)
+                                    }
                                     for ((_, moveList) in possibleMoves) {
                                         for (move in moveList) {
                                             //We highlight the cells of a possible move, if you do not need to beat.
-                                            Board().setHighlightCell(container, move)
+                                            if (checkersOnBoard[prevCellName]?.getColor() == playerTurn) {
+                                                Board().setHighlightCell(container, move)
+                                            }
                                         }
                                     }
 
@@ -133,7 +145,7 @@ class Game {
                             val newPosY = Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).second
                             val newCellName = Converter().coordinateToCellName(newPosX, newPosY)
 
-                            var nextStepCondition = false
+                            var beatCondition = false
 
                             //If the players move (1 - red, 2 - white) matches the color of the selected checker.
                             if (playerTurn == checkersOnBoard[prevCellName]?.getColor()) {
@@ -144,18 +156,18 @@ class Game {
                                         needToBeatNow = true
                                         if (key == prevCellName) {
 
-                                            nextStepCondition = true
+                                            beatCondition = true
 
                                         }
                                         //The cell to move to.
-                                        needToBeatMap[key]?.let { neededToMoveList.add(it) }
+                                        needToBeatMap[key]?.let { mustToMoveList.add(it) }
                                     }
                                 }
 
-                                if (nextStepCondition) {
+                                if (beatCondition) {
 
                                     //If the cell where you need to move to beat matches the cell where we put, then move.
-                                    if (neededToMoveList.contains(newCellName) && needToBeatMap[prevCellName] == newCellName) {
+                                    if (mustToMoveList.contains(newCellName) && needToBeatMap[prevCellName] == newCellName) {
 
                                         val beatenChecker = getCellBetweenTwo(prevCellName, newCellName)
 
@@ -171,6 +183,7 @@ class Game {
                                             ).second.toFloat()
 
                                         hasBeat = true
+                                        turnsWithoutBeating = 0
                                         needToBeatMap = mutableMapOf()
 
 
@@ -182,6 +195,25 @@ class Game {
 
                                         changePosToChecker(container, newCellName, prevCellName)
                                         changeCellColor(newCellName, prevCellName)
+
+                                        //Replace default checker to queen.
+                                        if (checkersOnBoard[newCellName]?.getColor() == 1) {
+                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('a') == true) {
+                                                checkersOnBoard[newCellName]?.setQueen(true)
+                                                Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
+                                                replacedToQueen = true
+
+                                            }
+                                        }
+
+                                        if (checkersOnBoard[newCellName]?.getColor() == 2) {
+                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('h') == true) {
+                                                checkersOnBoard[newCellName]?.setQueen(true)
+                                                Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
+                                                replacedToQueen = true
+                                            }
+                                        }
+
 
                                         hasMoved = true
 
@@ -205,11 +237,30 @@ class Game {
                                         Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).second.toFloat()
 
                                     hasBeat = false
+                                    turnsWithoutBeating++
 
                                     if (newCellName != prevCellName) {
 
                                         changePosToChecker(container, newCellName, prevCellName)
                                         changeCellColor(newCellName, prevCellName)
+
+                                        //Replace default checker to queen.
+                                        if (checkersOnBoard[newCellName]?.getColor() == 1) {
+                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('a') == true) {
+                                                checkersOnBoard[newCellName]?.setQueen(true)
+                                                Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
+                                                replacedToQueen = true
+                                            }
+                                        }
+
+                                        if (checkersOnBoard[newCellName]?.getColor() == 2) {
+                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('h') == true) {
+                                                checkersOnBoard[newCellName]?.setQueen(true)
+                                                Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
+                                                replacedToQueen = true
+                                            }
+                                        }
+
                                         hasMoved = true
 
                                     }
@@ -223,27 +274,26 @@ class Game {
                                 }
 
                                 //After beat the checker, detect new possible beat moves.
-                                if (multiplyBeat && hasBeat) {
+                                if (hasBeat && !replacedToQueen) {
 
-                                    defaultCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColor())
+                                    if (checkersOnBoard[newCellName]?.getQueenInfo() == false) {
+                                        defaultCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColor())
+                                    } else {
+                                        queenCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColor())
+                                    }
 
-                                    if (!needToBeatMap.containsKey(newCellName)) {
+                                    if (!needToBeatMap.containsKey(newCellName) || replacedToQueen) {
                                         needToBeatNow = false
                                     }
 
                                 }
 
-                                if (!needToBeatNow) {
-
+                                if (!needToBeatNow || replacedToQueen) {
                                     if (hasMoved) {
-
                                         playerTurn = if (playerTurn == 1) 2 else 1
-
                                         determineWhoseTurn(container)
-
                                     }
                                 }
-
 
                                 hasMoved = false
                                 isHoldingOnChecker = false
@@ -252,7 +302,7 @@ class Game {
                             if (needToBeatNow || hasBeat) {
 
                                 //If you beat the checker, then we erase the highlight by the special collections.
-                                for (move in neededToMoveList) {
+                                for (move in mustToMoveList) {
 
                                     //Remove cell highlight.
                                     Board().removeHighlightCell(container, move)
@@ -267,7 +317,17 @@ class Game {
                             }
                             hasBeat = false
                             needToBeatNow = false
-                            neededToMoveList = mutableListOf()
+                            replacedToQueen = false
+                            mustToMoveList = mutableListOf()
+
+                            //Calculate game end.
+
+                            endGameWithWinnerByBeatingAllCheckers()
+
+                            if (turnsWithoutBeating >= 20) {
+                                endGameWithDraw()
+                            }
+
                         }
                     }
                 }
@@ -280,7 +340,7 @@ class Game {
      * Check potential further move for default checker.
      */
 
-    private fun potentialFurtherMoveForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): Pair<String, String> {
+    private fun potentialFurtherMovesForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): Pair<String, String> {
 
         val letter = Converter().cellNameSeparate(chosenCheckerCellName).first
         val integer = Converter().cellNameSeparate(chosenCheckerCellName).second
@@ -327,7 +387,6 @@ class Game {
                 }
             }
         }
-        //println("$posLetter$posIntLeft" to "$posLetter$posIntRight")
         return "$posLetter$posIntLeft" to "$posLetter$posIntRight"
     }
 
@@ -335,9 +394,9 @@ class Game {
      * Check possible moves for default checker.
      */
 
-    private fun possibleMoveForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): List<String> {
+    private fun possibleMovesForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): List<String> {
         val result = mutableListOf<String>()
-        val possibleMoves = potentialFurtherMoveForDefaultChecker(chosenCheckerCellName, colorChecker)
+        val possibleMoves = potentialFurtherMovesForDefaultChecker(chosenCheckerCellName, colorChecker)
 
         if (checkEmptyCell(possibleMoves.first)) result.add(possibleMoves.first)
         if (checkEmptyCell(possibleMoves.second)) result.add(possibleMoves.second)
@@ -363,26 +422,26 @@ class Game {
 
         for (checkerOnBoardName in checkersOnBoard.keys) {
 
-            //For checking checker only who making turn.
+            //For checker only who making turn.
             if (checkersOnBoard[checkerOnBoardName]?.getColor() == colorChecker) {
 
-                possibleMoves = potentialFurtherMoveForDefaultChecker(checkerOnBoardName, colorChecker)
+                possibleMoves = potentialFurtherMovesForDefaultChecker(checkerOnBoardName, colorChecker)
 
                 if (colorChecker == 1) {
-
+                    //If the checker is on the two leftmost cells, in the top row
                     if (!checkerOnBoardName.contains('1') && !checkerOnBoardName.contains('2') && !checkerOnBoardName.contains('a')) {
-
+                        //If on a possible move, in front of player 1 checker, there is player 2 checker
                         if (board[possibleMoves.first]?.getColorInfo() == 2) {
 
                             possibleMoveLetter = Converter().cellNameSeparate(possibleMoves.first).first
                             possibleMoveInteger = Converter().cellNameSeparate(possibleMoves.first).second
-
+                            //If player 2 checker is not on the left or and top
                             if (possibleMoveLetter != 'a' && possibleMoveInteger != 1) {
-
+                                //Calculate the possible move to beat
                                 checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) - 1]
                                 checkInteger = possibleMoveInteger - 1
                                 move = "$checkLetter$checkInteger"
-
+                                //If the calculated cell is empty
                                 if (board[move]?.getColorInfo() == 0) {
                                     needToBeatMap[checkerOnBoardName] = move
                                 }
@@ -390,20 +449,20 @@ class Game {
                             }
                         }
                     }
-
+                    //If the checker is on the two rightmost cells, in the top row
                     if (!checkerOnBoardName.contains('7') && !checkerOnBoardName.contains('8') && !checkerOnBoardName.contains('a')) {
-
+                        //If on a possible move, in front of player 1 checker, there is player 2 checker
                         if (board[possibleMoves.second]?.getColorInfo() == 2) {
 
                             possibleMoveLetter = Converter().cellNameSeparate(possibleMoves.second).first
                             possibleMoveInteger = Converter().cellNameSeparate(possibleMoves.second).second
-
+                            //If player 2 checker is not on the right and top
                             if (possibleMoveLetter != 'a' && possibleMoveInteger != 8) {
-
+                                //Calculate the possible move to beat
                                 checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) - 1]
                                 checkInteger = possibleMoveInteger + 1
                                 move = "$checkLetter$checkInteger"
-
+                                //If the calculated cell is empty
                                 if (board[move]?.getColorInfo() == 0) {
                                     needToBeatMap[checkerOnBoardName] = move
                                 }
@@ -414,20 +473,20 @@ class Game {
                 }
 
                 if (colorChecker == 2) {
-
+                    //If the checker is on the two leftmost cells, in the bottom row
                     if (!checkerOnBoardName.contains('1') && !checkerOnBoardName.contains('2') && !checkerOnBoardName.contains('h')) {
-
+                        //If on a possible move, in front of player 2 checker, there is player 1 checker
                         if (board[possibleMoves.first]?.getColorInfo() == 1) {
 
                             possibleMoveLetter = Converter().cellNameSeparate(possibleMoves.first).first
                             possibleMoveInteger = Converter().cellNameSeparate(possibleMoves.first).second
-
+                            //If player 2 checker is not on the right and bottom
                             if (possibleMoveLetter != 'h' && possibleMoveInteger != 8) {
-
+                                //Calculate the possible move to beat
                                 checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) + 1]
                                 checkInteger = possibleMoveInteger - 1
                                 move = "$checkLetter$checkInteger"
-
+                                //If the calculated cell is empty
                                 if (board[move]?.getColorInfo() == 0) {
                                     needToBeatMap[checkerOnBoardName] = move
                                 }
@@ -435,20 +494,20 @@ class Game {
                             }
                         }
                     }
-
+                    //If the checker is on the two rightmost cells, in the bottom row
                     if (!checkerOnBoardName.contains('7') && !checkerOnBoardName.contains('8') && !checkerOnBoardName.contains('h')) {
-
+                        //If on a possible move, in front of player 2 checker, there is player 1 checker
                         if (board[possibleMoves.second]?.getColorInfo() == 1) {
 
                             possibleMoveLetter = Converter().cellNameSeparate(possibleMoves.second).first
                             possibleMoveInteger = Converter().cellNameSeparate(possibleMoves.second).second
-
+                            //If player 2 checker is not on the left and bottom
                             if (possibleMoveLetter != 'h' && possibleMoveInteger != 1) {
-
+                                //Calculate the possible move to beat
                                 checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) + 1]
                                 checkInteger = possibleMoveInteger + 1
                                 move = "$checkLetter$checkInteger"
-
+                                //If the calculated cell is empty
                                 if (board[move]?.getColorInfo() == 0) {
                                     needToBeatMap[checkerOnBoardName] = move
                                 }
@@ -459,6 +518,154 @@ class Game {
                 }
             }
         }
+
+    }
+
+    /*
+     * Check potential further move for default checker.
+     */
+
+    private fun potentialFurtherMovesForQueenChecker(chosenQueenCheckerCellName: String): List<String> {
+
+        val potentialMoves = mutableListOf<String>()
+        val result = mutableListOf<String>()
+
+        val letter = Converter().cellNameSeparate(chosenQueenCheckerCellName).first
+        val integer = Converter().cellNameSeparate(chosenQueenCheckerCellName).second
+
+        var posLetter: Char
+        val posIntRight = integer + 1
+        val posIntLeft = integer - 1
+
+        if (letter != 'a') {
+            posLetter = cellToLetter[(cellToLetter.indexOf(letter) - 1)]
+
+            potentialMoves.add("$posLetter$posIntLeft")
+            potentialMoves.add("$posLetter$posIntRight")
+        }
+
+        if (letter != 'h') {
+            posLetter = cellToLetter[(cellToLetter.indexOf(letter) + 1)]
+
+            potentialMoves.add("$posLetter$posIntLeft")
+            potentialMoves.add("$posLetter$posIntRight")
+        }
+
+        for (move in potentialMoves) {
+            if (board[move] != null) {
+                result.add(move)
+            }
+        }
+        return result
+    }
+
+    /*
+     * Check possible moves for queen checker.
+     */
+
+    private fun possibleMovesForQueenChecker(chosenCheckerCellName: String): List<String> {
+
+        val result = mutableListOf<String>()
+        val possibleMoves = potentialFurtherMovesForQueenChecker(chosenCheckerCellName)
+
+        for (move in possibleMoves) {
+            if (checkEmptyCell(move)) {
+                result.add(move)
+            }
+        }
+
+        return result.toList()
+    }
+
+    /*
+     * Check queen checker need to beat.
+     */
+
+    private fun queenCheckerNeedToBeat(colorChecker: Int?) {
+
+        //Player queens on board
+        val queensOnBoard = mutableListOf<String>()
+
+        var queenLetter: Char
+        var queenInteger: Int
+
+        var potentialMoves: List<String>
+
+        var possibleMoveLetter: Char
+        var possibleMoveInteger: Int
+
+        var checkLetter: Char
+        var checkInteger: Int
+
+        var move: String
+
+        for (checkerName in checkersOnBoard.keys) {
+            if (checkersOnBoard[checkerName]?.getQueenInfo() == true && checkersOnBoard[checkerName]?.getColor() == colorChecker) {
+                queensOnBoard.add(checkerName)
+            }
+        }
+
+        for (queenName in queensOnBoard) {
+
+                potentialMoves = potentialFurtherMovesForQueenChecker(queenName)
+
+                queenLetter = Converter().cellNameSeparate(queenName).first
+                queenInteger = Converter().cellNameSeparate(queenName).second
+
+                        //If on a possible move, in front of player checker, there is enemy checker
+                        for (potMove in potentialMoves) {
+                            //If potential move is enemy checker
+                            if (board[potMove]?.getColorInfo() != colorChecker && board[potMove]?.getColorInfo() != 0) {
+
+                                possibleMoveLetter = Converter().cellNameSeparate(potMove).first
+                                possibleMoveInteger = Converter().cellNameSeparate(potMove).second
+                                //If you need to beat left up
+                                if (possibleMoveLetter != 'a' && possibleMoveInteger != 1) {
+                                    if (cellToLetter.indexOf(possibleMoveLetter) < cellToLetter.indexOf(queenLetter) && possibleMoveInteger < queenInteger) {
+                                        checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) - 1]
+                                        checkInteger = possibleMoveInteger - 1
+                                        move = "$checkLetter$checkInteger"
+                                        if (board[move]?.getColorInfo() == 0) {
+                                            needToBeatMap[queenName] = move
+                                        }
+                                    }
+                                }
+                                //If you need to beat right up
+                                if (possibleMoveLetter != 'a' && possibleMoveInteger != 8) {
+                                    if (cellToLetter.indexOf(possibleMoveLetter) < cellToLetter.indexOf(queenLetter) && possibleMoveInteger > queenInteger) {
+                                        checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) - 1]
+                                        checkInteger = possibleMoveInteger + 1
+                                        move = "$checkLetter$checkInteger"
+                                        if (board[move]?.getColorInfo() == 0) {
+                                            needToBeatMap[queenName] = move
+                                        }
+                                    }
+                                }
+                                //If you need to beat left down
+                                if (possibleMoveLetter != 'h' && possibleMoveInteger != 1) {
+                                    if (cellToLetter.indexOf(possibleMoveLetter) > cellToLetter.indexOf(queenLetter) && possibleMoveInteger < queenInteger) {
+                                        checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) + 1]
+                                        checkInteger = possibleMoveInteger - 1
+                                        move = "$checkLetter$checkInteger"
+                                        if (board[move]?.getColorInfo() == 0) {
+                                            needToBeatMap[queenName] = move
+                                        }
+                                    }
+                                }
+                                //If you need to beat right down
+                                if (possibleMoveLetter != 'h' && possibleMoveInteger != 8) {
+                                    if (cellToLetter.indexOf(possibleMoveLetter) > cellToLetter.indexOf(queenLetter) && possibleMoveInteger > queenInteger) {
+                                        checkLetter = cellToLetter[cellToLetter.indexOf(possibleMoveLetter) + 1]
+                                        checkInteger = possibleMoveInteger + 1
+                                        move = "$checkLetter$checkInteger"
+                                        if (board[move]?.getColorInfo() == 0) {
+                                            needToBeatMap[queenName] = move
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                }
 
     }
 
@@ -584,4 +791,80 @@ class Game {
         }
 
     }
+
+    /*
+    * Create cells with information on board once.
+    */
+
+    fun placeCellsOnBoard() {
+        var nameCell: String
+        var turnCell = false
+        var colorChecker: Int
+        for (x in 0..7) {
+            for (y in 0..7) {
+                nameCell = "${cellToLetter[y]}${x + 1}"
+
+                if (checkersOnBoard[nameCell]?.getPos()  == nameCell) {
+                    colorChecker = checkersOnBoard[nameCell]!!.getColor()
+                } else {
+                    colorChecker = 0
+                }
+
+                if ((x + 1) % 2 == 0) {
+                    turnCell = (y + 1) % 2 != 0
+                }
+
+                if ((x + 1) % 2 != 0) {
+                    turnCell = (y + 1) % 2 == 0
+                }
+
+                board[nameCell] = BoardCell(nameCell, turnCell, colorChecker,false, false)
+
+            }
+        }
+    }
+
+    /*
+     * Making game over with winner by beating all enemy checkers.
+     *
+     * 0 - No win & No draw
+     * 1 - Win Player 1
+     * 2 - Win Player 2
+     *
+     */
+
+    private fun endGameWithWinnerByBeatingAllCheckers(): Int {
+
+        var winPlayerOne = false
+        var winPlayerTwo = false
+
+        for (checker in checkersOnBoard) {
+            if (checker.value?.getColor() == 1) {
+                winPlayerOne = true
+            }
+            if (checker.value?.getColor() == 2) {
+                winPlayerTwo = true
+            }
+        }
+        if (winPlayerOne && winPlayerTwo) {
+            return 0
+        }
+        if (winPlayerOne) {
+            return 1
+        }
+        if (winPlayerTwo) {
+            return 2
+        }
+        return 0
+    }
+
+    /*
+     * Making game over with draw.
+     */
+
+    private fun endGameWithDraw() {
+        //Popup Dialog Box with "Restart" and "Menu" buttons.
+    }
+
+
 }

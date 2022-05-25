@@ -10,10 +10,10 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.EnglishCheckers">
         <activity
-                android:name=".GameActivity"
+                android:name=".controller.GameActivity"
                 android:exported="true"/>
         <activity
-                android:name=".MainActivity"
+                android:name=".controller.MainActivity"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

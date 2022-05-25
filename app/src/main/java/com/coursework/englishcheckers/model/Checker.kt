@@ -1,8 +1,9 @@
-package com.coursework.englishcheckers
+package com.coursework.englishcheckers.model
 
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import com.coursework.englishcheckers.R
 
 class Checker(
     private val color: Int,
@@ -37,7 +38,7 @@ class Checker(
         imageViewChecker.tag = newPos
     }
 
-    fun draw(container:View, x: Int, y: Int): ImageView {
+    fun draw(container:FrameLayout, x: Int, y: Int): ImageView {
         return ImageView(container.context).apply {
             if (color == 2 && !queen) {
                 this.setImageResource(R.drawable.checker_white)

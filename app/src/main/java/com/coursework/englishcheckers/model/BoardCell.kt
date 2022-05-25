@@ -1,10 +1,4 @@
-package com.coursework.englishcheckers
-
-import android.app.Activity
-import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageView
-import androidx.fragment.app.FragmentManager
+package com.coursework.englishcheckers.model
 
 class BoardCell(
     private val nameCell: String,
@@ -47,6 +41,5 @@ class BoardCell(
     fun getHighlightInfo(): Boolean {
         return this.highlighted
     }
-
 
 }

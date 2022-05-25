@@ -3,4 +3,6 @@
     <string name="startButtonText">Start</string>
     <string name="playerTurnOne">Turn Player 1</string>
     <string name="playerTurnTwo">Turn Player 2</string>
+    <string name="english_checkers">English Checkers</string>
+    <string name="for_2_players">2 players</string>
 </resources>
