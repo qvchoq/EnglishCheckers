@@ -27,7 +27,6 @@ class Game {
     private var playerTurn = 1
 
     private var turnsWithoutBeating = 0
-    private var noPossibleMovesForPlayer = 0
 
     private var hasBeat = false
     private var hasMoved = false
@@ -324,7 +323,7 @@ class Game {
 
                             endGameWithWinnerByBeatingAllCheckers()
 
-                            if (turnsWithoutBeating >= 20) {
+                            if (turnsWithoutBeating >= 30) {
                                 endGameWithDraw()
                             }
 
@@ -846,16 +845,43 @@ class Game {
                 winPlayerTwo = true
             }
         }
-        if (winPlayerOne && winPlayerTwo) {
-            return 0
-        }
-        if (winPlayerOne) {
-            return 1
-        }
-        if (winPlayerTwo) {
-            return 2
+        if (winPlayerOne && !winPlayerTwo || !winPlayerOne && winPlayerTwo) {
+
+            if (winPlayerOne) {
+                println("Player 1 is win! (By Beating all checkers)")
+                //Dialog box - first player win
+            }
+            if (winPlayerTwo) {
+                println("Player 2 is win! (By Beating all checkers)")
+                //Dialog box - second player win
+            }
+
         }
         return 0
+    }
+
+    /*
+     * Making game over by no possible moves for one player.
+     */
+
+    private fun endGameWithWinnerByNoPossibleMoves() {
+
+        var moveIsPossible = true
+
+        for (checkerName in checkersOnBoard.keys) {
+            if (checkersOnBoard[checkerName]?.getColor() == playerTurn) {
+                if (checkersOnBoard[checkerName]?.getQueenInfo() == true) {
+                    moveIsPossible = possibleMovesForQueenChecker(checkerName).isNotEmpty()
+                } else {
+                    moveIsPossible = possibleMovesForDefaultChecker(checkerName, playerTurn).isNotEmpty()
+                }
+            }
+        }
+
+        if (!moveIsPossible) {
+            println("Player $playerTurn is win! (By Beating no Possible moves)")
+            //Dialog box - $playerTurn player winner.
+        }
     }
 
     /*
@@ -863,6 +889,7 @@ class Game {
      */
 
     private fun endGameWithDraw() {
+        println("End game! Draw.")
         //Popup Dialog Box with "Restart" and "Menu" buttons.
     }
 
