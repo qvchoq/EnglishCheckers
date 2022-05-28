@@ -5,4 +5,9 @@
     <string name="playerTurnTwo">Turn Player 2</string>
     <string name="english_checkers">English Checkers</string>
     <string name="for_2_players">2 players</string>
+    <string name="winner">The 1 Player wins!</string>
+    <string name="text_dialog_2">TEXT 2</string>
+    <string name="text_dialog_1">TEXT 1</string>
+    <string name="restart">restart</string>
+    <string name="menu">menu</string>
 </resources>

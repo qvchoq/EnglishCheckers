@@ -197,7 +197,8 @@ class Game {
 
                                         //Replace default checker to queen.
                                         if (checkersOnBoard[newCellName]?.getColor() == 1) {
-                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('a') == true) {
+                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('a') == true &&
+                                                checkersOnBoard[newCellName]?.getQueenInfo() == false) {
                                                 checkersOnBoard[newCellName]?.setQueen(true)
                                                 Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
                                                 replacedToQueen = true
@@ -206,7 +207,8 @@ class Game {
                                         }
 
                                         if (checkersOnBoard[newCellName]?.getColor() == 2) {
-                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('h') == true) {
+                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('h') == true &&
+                                                checkersOnBoard[newCellName]?.getQueenInfo() == false) {
                                                 checkersOnBoard[newCellName]?.setQueen(true)
                                                 Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
                                                 replacedToQueen = true
@@ -245,7 +247,8 @@ class Game {
 
                                         //Replace default checker to queen.
                                         if (checkersOnBoard[newCellName]?.getColor() == 1) {
-                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('a') == true) {
+                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('a') == true &&
+                                                checkersOnBoard[newCellName]?.getQueenInfo() == false) {
                                                 checkersOnBoard[newCellName]?.setQueen(true)
                                                 Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
                                                 replacedToQueen = true
@@ -253,7 +256,8 @@ class Game {
                                         }
 
                                         if (checkersOnBoard[newCellName]?.getColor() == 2) {
-                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('h') == true) {
+                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('h') == true &&
+                                                checkersOnBoard[newCellName]?.getQueenInfo() == false) {
                                                 checkersOnBoard[newCellName]?.setQueen(true)
                                                 Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
                                                 replacedToQueen = true
@@ -320,7 +324,7 @@ class Game {
                             mustToMoveList = mutableListOf()
 
                             //Calculate game end.
-
+                            endGameWithWinnerByNoPossibleMoves(playerTurn)
                             endGameWithWinnerByBeatingAllCheckers()
 
                             if (turnsWithoutBeating >= 30) {
@@ -848,11 +852,11 @@ class Game {
         if (winPlayerOne && !winPlayerTwo || !winPlayerOne && winPlayerTwo) {
 
             if (winPlayerOne) {
-                println("Player 1 is win! (By Beating all checkers)")
+                println("Player 1 wins! (By Beating all checkers)")
                 //Dialog box - first player win
             }
             if (winPlayerTwo) {
-                println("Player 2 is win! (By Beating all checkers)")
+                println("Player 2 wins! (By Beating all checkers)")
                 //Dialog box - second player win
             }
 
@@ -864,22 +868,23 @@ class Game {
      * Making game over by no possible moves for one player.
      */
 
-    private fun endGameWithWinnerByNoPossibleMoves() {
+    private fun endGameWithWinnerByNoPossibleMoves(checkPlayer: Int) {
 
-        var moveIsPossible = true
+        val allPossibleMovesForPlayer = mutableListOf<String>()
+        val player = if (checkPlayer == 1) 2 else 1
 
         for (checkerName in checkersOnBoard.keys) {
-            if (checkersOnBoard[checkerName]?.getColor() == playerTurn) {
+            if (checkersOnBoard[checkerName]?.getColor() == player) {
                 if (checkersOnBoard[checkerName]?.getQueenInfo() == true) {
-                    moveIsPossible = possibleMovesForQueenChecker(checkerName).isNotEmpty()
+                    allPossibleMovesForPlayer += possibleMovesForQueenChecker(checkerName)
                 } else {
-                    moveIsPossible = possibleMovesForDefaultChecker(checkerName, playerTurn).isNotEmpty()
+                    allPossibleMovesForPlayer += possibleMovesForDefaultChecker(checkerName, player)
                 }
             }
         }
 
-        if (!moveIsPossible) {
-            println("Player $playerTurn is win! (By Beating no Possible moves)")
+        if (allPossibleMovesForPlayer.isEmpty()) {
+            println("Player $playerTurn wins! (By Beating no Possible moves)")
             //Dialog box - $playerTurn player winner.
         }
     }
