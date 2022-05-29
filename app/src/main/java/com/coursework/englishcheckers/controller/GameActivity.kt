@@ -49,12 +49,6 @@ class GameActivity : AppCompatActivity() {
         Board().prepareViewsForGame(container)
         Game().placeCellsOnBoard()
         mainMoveLogic(container)
-        val testButton: Button = findViewById(R.id.button_test_dialog)
-
-        testButton.setOnClickListener {
-            endGame()
-        }
-
     }
 
     /*
