@@ -4,7 +4,6 @@ import android.app.Activity
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.coursework.englishcheckers.R
-import com.coursework.englishcheckers.controller.screenHeight
 import com.coursework.englishcheckers.model.BoardCell
 import com.coursework.englishcheckers.model.Checker
 import com.coursework.englishcheckers.model.Converter
