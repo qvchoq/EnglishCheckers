@@ -1,6 +1,5 @@
 package com.coursework.englishcheckers.model
 
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.coursework.englishcheckers.R

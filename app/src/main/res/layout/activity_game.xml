@@ -26,5 +26,13 @@
             android:id="@+id/turnText"
             android:textStyle="bold"/>
 
+    <Button
+            android:text="SHOW DIALOG"
+            android:layout_marginTop="600dp"
+            android:layout_marginStart="135dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_test_dialog"/>
+
 
 </FrameLayout>

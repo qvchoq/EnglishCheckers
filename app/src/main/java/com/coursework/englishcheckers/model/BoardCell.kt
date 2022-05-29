@@ -1,10 +1,7 @@
 package com.coursework.englishcheckers.model
 
 class BoardCell(
-    private val nameCell: String,
-    private val turnCell: Boolean,
     private var colorChecker: Int,
-    private var queenOnBoard: Boolean,
     private var highlighted: Boolean
 ) {
 
@@ -20,18 +17,6 @@ class BoardCell(
 
     fun getColorInfo(): Int {
         return this.colorChecker
-    }
-
-    fun setQueen(queen: Boolean) {
-        this.queenOnBoard = queen
-    }
-
-    fun getQueenInfo(): Boolean {
-        return this.queenOnBoard
-    }
-
-    fun getTurnInfo(): Boolean {
-        return this.turnCell
     }
 
     fun setHighlight(highlight: Boolean) {
