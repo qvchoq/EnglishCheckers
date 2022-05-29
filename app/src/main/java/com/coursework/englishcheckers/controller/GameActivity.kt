@@ -16,6 +16,10 @@ import com.coursework.englishcheckers.view.Board
 import com.coursework.englishcheckers.view.board
 import com.coursework.englishcheckers.view.checkersOnBoard
 
+//val screenWidth = Resources.getSystem().displayMetrics.widthPixels
+//val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+
+
 class GameActivity : AppCompatActivity() {
 
     private val boardSize = 910

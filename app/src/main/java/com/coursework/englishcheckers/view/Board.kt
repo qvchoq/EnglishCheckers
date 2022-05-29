@@ -4,6 +4,7 @@ import android.app.Activity
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.coursework.englishcheckers.R
+import com.coursework.englishcheckers.controller.screenHeight
 import com.coursework.englishcheckers.model.BoardCell
 import com.coursework.englishcheckers.model.Checker
 import com.coursework.englishcheckers.model.Converter
@@ -100,8 +101,8 @@ class Board {
             this.tag = cellName+'h'
             this.setImageResource(R.drawable.highlight)
             this.layoutParams = FrameLayout.LayoutParams(130,130)
-            this.translationX = Converter().cellNameToCoordinate(cellName).first.toFloat() - 12
-            this.translationY = Converter().cellNameToCoordinate(cellName).second.toFloat() - 12
+            this.translationX = Converter().cellNameToCoordinate(cellName).first.toFloat() - 11
+            this.translationY = Converter().cellNameToCoordinate(cellName).second.toFloat() - 11
         }
 
         (container.context as Activity).runOnUiThread {
