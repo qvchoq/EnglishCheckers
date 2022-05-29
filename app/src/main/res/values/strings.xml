@@ -10,4 +10,7 @@
     <string name="winner_2">2 Player wins!</string>
     <string name="restart">restart</string>
     <string name="menu">menu</string>
+    <string name="warning">Your game progress will not be saved, are you sure?</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 </resources>

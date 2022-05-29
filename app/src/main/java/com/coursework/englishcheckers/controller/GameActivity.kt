@@ -3,22 +3,21 @@ package com.coursework.englishcheckers.controller
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.coursework.englishcheckers.R
 import com.coursework.englishcheckers.model.*
+import com.coursework.englishcheckers.model.Game.Companion.needToBeatMap
+import com.coursework.englishcheckers.model.Game.Companion.playerTurn
+import com.coursework.englishcheckers.model.Game.Companion.winner
 import com.coursework.englishcheckers.view.Board
-import com.coursework.englishcheckers.view.board
-import com.coursework.englishcheckers.view.checkersOnBoard
-
-//val screenWidth = Resources.getSystem().displayMetrics.widthPixels
-//val screenHeight = Resources.getSystem().displayMetrics.heightPixels
-
+import com.coursework.englishcheckers.view.Board.Companion.board
+import com.coursework.englishcheckers.view.Board.Companion.checkersOnBoard
 
 class GameActivity : AppCompatActivity() {
 
@@ -53,6 +52,14 @@ class GameActivity : AppCompatActivity() {
         Board().prepareViewsForGame(container)
         Game().placeCellsOnBoard()
         mainMoveLogic(container)
+    }
+
+    /*
+     * On back pressed, showing dialog with warning.
+     */
+
+    override fun onBackPressed() {
+        showDialogBackPressed()
     }
 
     /*
@@ -146,13 +153,15 @@ class GameActivity : AppCompatActivity() {
                                     (event.x - origin)
                                 container.findViewWithTag<ImageView>(prevCellName).translationY =
                                     (event.y - origin)
-
+                                container.findViewWithTag<ImageView>(prevCellName).translationZ = 3F
                             }
                         }
                     }
 
                     MotionEvent.ACTION_UP -> {
                         if (isHoldingOnChecker) {
+
+                            container.findViewWithTag<ImageView>(prevCellName).translationZ = 1F
 
                             val newPosX = Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).first
                             val newPosY = Converter().coordinateToCell(event.x.toInt(), event.y.toInt()).second
@@ -337,6 +346,7 @@ class GameActivity : AppCompatActivity() {
                             replacedToQueen = false
                             mustToMoveList = mutableListOf()
 
+
                             //Calculate game end.
                             endGame()
                         }
@@ -349,11 +359,40 @@ class GameActivity : AppCompatActivity() {
     }
 
     /*
-     * Show dialog box with restart and menu buttons.
+     * Show dialog box on back pressed.
+     */
+
+    private fun showDialogBackPressed() {
+        val dialog = Dialog(this)
+
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.layout_backpressed_dialog)
+
+        val yesButton = dialog.findViewById<Button>(R.id.dialog_warning_yes_btn)
+
+        yesButton.setOnClickListener {
+            dialog.dismiss()
+            finish()
+            Game().clearAllData()
+            startActivity(Intent(this, MainActivity::class.java))
+            super.onBackPressed()
+        }
+
+        val noButton = dialog.findViewById<Button>(R.id.dialog_warning_no_btn)
+
+        noButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+
+    /*
+     * Show dialog box with end game.
      */
 
     @SuppressLint("ClickableViewAccessibility", "ResourceType")
-    private fun showDialog() {
+    private fun showDialogGameEnd() {
         val dialog = Dialog(this)
 
         dialog.setCancelable(false)
@@ -400,13 +439,13 @@ class GameActivity : AppCompatActivity() {
     private fun endGame() {
 
         if (turnsWithoutBeating >= 30) {
-            showDialog()
+            showDialogGameEnd()
         } else {
             if (Game().endGameWithWinnerByNoPossibleMoves(playerTurn)) {
-                showDialog()
+                showDialogGameEnd()
             }
             if (Game().endGameWithWinnerByBeatingAllCheckers()) {
-                showDialog()
+                showDialogGameEnd()
             }
         }
 

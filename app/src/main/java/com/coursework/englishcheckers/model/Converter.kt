@@ -1,6 +1,6 @@
 package com.coursework.englishcheckers.model
 
-import com.coursework.englishcheckers.view.checkersOnBoard
+import com.coursework.englishcheckers.view.Board.Companion.checkersOnBoard
 
 
 val mapCellListX = mapOf(

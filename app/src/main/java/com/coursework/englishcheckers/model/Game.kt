@@ -4,15 +4,17 @@ import android.app.Activity
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.coursework.englishcheckers.*
-import com.coursework.englishcheckers.view.board
-import com.coursework.englishcheckers.view.cellToLetter
-import com.coursework.englishcheckers.view.checkersOnBoard
-
-var winner = 0
-var playerTurn = 1
-var needToBeatMap = mutableMapOf<String, String>()
+import com.coursework.englishcheckers.view.Board.Companion.board
+import com.coursework.englishcheckers.view.Board.Companion.cellToLetter
+import com.coursework.englishcheckers.view.Board.Companion.checkersOnBoard
 
 class Game {
+
+    companion object {
+        var winner = 0
+        var playerTurn = 1
+        var needToBeatMap = mutableMapOf<String, String>()
+    }
 
     private val borderOfBoardX = 30..1040
     private val borderOfBoardY = 450..1460

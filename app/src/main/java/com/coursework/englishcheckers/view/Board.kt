@@ -8,21 +8,24 @@ import com.coursework.englishcheckers.model.BoardCell
 import com.coursework.englishcheckers.model.Checker
 import com.coursework.englishcheckers.model.Converter
 
-var board = mutableMapOf<String, BoardCell>()
-var checkersOnBoard = mutableMapOf<String, Checker?>()
-
-val cellToLetter = listOf(
-    'a',
-    'b',
-    'c',
-    'd',
-    'e',
-    'f',
-    'g',
-    'h'
-)
-
 class Board {
+
+    companion object {
+        var board = mutableMapOf<String, BoardCell>()
+        var checkersOnBoard = mutableMapOf<String, Checker?>()
+
+        val cellToLetter = listOf(
+            'a',
+            'b',
+            'c',
+            'd',
+            'e',
+            'f',
+            'g',
+            'h'
+        )
+    }
+
 
     /*
      * Call all functions to start the game.
@@ -99,7 +102,7 @@ class Board {
         val cell = ImageView(container.context).apply {
             this.tag = cellName+'h'
             this.setImageResource(R.drawable.highlight)
-            this.layoutParams = FrameLayout.LayoutParams(130,130)
+            this.layoutParams = FrameLayout.LayoutParams(131,132)
             this.translationX = Converter().cellNameToCoordinate(cellName).first.toFloat() - 11
             this.translationY = Converter().cellNameToCoordinate(cellName).second.toFloat() - 11
         }
