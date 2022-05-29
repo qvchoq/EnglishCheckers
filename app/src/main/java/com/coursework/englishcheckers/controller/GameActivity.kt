@@ -49,7 +49,7 @@ class GameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
         val container: FrameLayout = findViewById(R.id.container)
-        Board().prepareViewsForGame(container)
+        Board().drawCheckers(container)
         Game().placeCellsOnBoard()
         mainMoveLogic(container)
     }
