@@ -155,6 +155,7 @@ class GameActivity : AppCompatActivity() {
                                     (event.y - origin)
                                 container.findViewWithTag<ImageView>(prevCellName).translationZ = 3F
                             }
+
                         }
                     }
 
@@ -221,24 +222,7 @@ class GameActivity : AppCompatActivity() {
                                         Game().changeCellColor(newCellName, prevCellName)
 
                                         //Replace default checker to queen.
-                                        if (checkersOnBoard[newCellName]?.getColor() == 1) {
-                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('a') == true &&
-                                                checkersOnBoard[newCellName]?.getQueenInfo() == false) {
-                                                checkersOnBoard[newCellName]?.setQueen(true)
-                                                Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
-                                                replacedToQueen = true
-
-                                            }
-                                        }
-
-                                        if (checkersOnBoard[newCellName]?.getColor() == 2) {
-                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('h') == true &&
-                                                checkersOnBoard[newCellName]?.getQueenInfo() == false) {
-                                                checkersOnBoard[newCellName]?.setQueen(true)
-                                                Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
-                                                replacedToQueen = true
-                                            }
-                                        }
+                                        replacedToQueen = Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
 
 
                                         hasMoved = true
@@ -271,23 +255,7 @@ class GameActivity : AppCompatActivity() {
                                         Game().changeCellColor(newCellName, prevCellName)
 
                                         //Replace default checker to queen.
-                                        if (checkersOnBoard[newCellName]?.getColor() == 1) {
-                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('a') == true &&
-                                                checkersOnBoard[newCellName]?.getQueenInfo() == false) {
-                                                checkersOnBoard[newCellName]?.setQueen(true)
-                                                Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
-                                                replacedToQueen = true
-                                            }
-                                        }
-
-                                        if (checkersOnBoard[newCellName]?.getColor() == 2) {
-                                            if (checkersOnBoard[newCellName]?.getPos()?.contains('h') == true &&
-                                                checkersOnBoard[newCellName]?.getQueenInfo() == false) {
-                                                checkersOnBoard[newCellName]?.setQueen(true)
-                                                Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
-                                                replacedToQueen = true
-                                            }
-                                        }
+                                        replacedToQueen = Board().replaceDefaultCheckerToQueen(container, newCellName, newPosX, newPosY)
 
                                         hasMoved = true
 
@@ -347,7 +315,6 @@ class GameActivity : AppCompatActivity() {
                             needToBeatNow = false
                             replacedToQueen = false
                             mustToMoveList = mutableListOf()
-
 
                             //Calculate game end.
                             endGame()

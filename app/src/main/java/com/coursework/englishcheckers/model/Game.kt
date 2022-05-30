@@ -558,6 +558,8 @@ class Game {
 
         val allPossibleMovesForPlayer = mutableListOf<String>()
 
+        val player = if (playerTurn == 1) 2 else 1
+
         for (checkerName in checkersOnBoard.keys) {
             if (checkersOnBoard[checkerName]?.getColor() == checkPlayer) {
                 if (checkersOnBoard[checkerName]?.getQueenInfo() == true) {
@@ -569,7 +571,7 @@ class Game {
         }
 
         if (allPossibleMovesForPlayer.isEmpty()) {
-            winner = if (playerTurn == 1) 2 else 1
+            winner = player
         }
 
         println("allPossibleMovesForPlayer : $allPossibleMovesForPlayer")

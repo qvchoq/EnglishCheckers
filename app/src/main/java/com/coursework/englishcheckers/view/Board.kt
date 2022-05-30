@@ -64,7 +64,7 @@ class Board {
                     (container.context as Activity).runOnUiThread {
                         container.addView(checker.draw(container, x, y))
                     }
-                    checkersOnBoard[Converter().coordinateToCellName(x,y)] = checker
+                    checkersOnBoard[Converter().coordinateToCellName(x, y)] = checker
                     x += 260
                 }
 
@@ -80,9 +80,9 @@ class Board {
         board[cellName]?.setHighlight(true)
 
         val cell = ImageView(container.context).apply {
-            this.tag = cellName+'h'
+            this.tag = cellName + 'h'
             this.setImageResource(R.drawable.highlight)
-            this.layoutParams = FrameLayout.LayoutParams(132,132)
+            this.layoutParams = FrameLayout.LayoutParams(132, 132)
             this.translationX = Converter().cellNameToCoordinate(cellName).first.toFloat() - 11
             this.translationY = Converter().cellNameToCoordinate(cellName).second.toFloat() - 11
         }
@@ -109,7 +109,7 @@ class Board {
         board[cellName]?.setHighlight(false)
 
         (container.context as Activity).runOnUiThread {
-            container.removeView(container.findViewWithTag<ImageView>(cellName+'h'))
+            container.removeView(container.findViewWithTag<ImageView>(cellName + 'h'))
         }
     }
 
@@ -117,15 +117,28 @@ class Board {
      * Erase the default checker and place there queen checker.
      */
 
-    fun replaceDefaultCheckerToQueen(container: FrameLayout, checkerName: String, x: Int, y: Int) {
+    fun replaceDefaultCheckerToQueen(container: FrameLayout, checkerName: String, x: Int, y: Int): Boolean {
         val checker = checkersOnBoard[checkerName]
 
-        (container.context as Activity).runOnUiThread {
-            if (checker != null) {
-                container.removeView(container.findViewWithTag(checkerName))
-                container.addView(checker.draw(container, x, y))
+        if (checker?.getColor() == 1) {
+            if (checker.getPos().contains('a') && !checker.getQueenInfo()) {
+                checker.setQueen(true)
+                (container.context as Activity).runOnUiThread {
+                    container.removeView(container.findViewWithTag(checkerName))
+                    container.addView(checker.draw(container, x, y))
+                }
+                return true
+            }
+        } else if (checker?.getColor() == 2) {
+            if (checker.getPos().contains('h') && !checker.getQueenInfo()) {
+                checker.setQueen(true)
+                (container.context as Activity).runOnUiThread {
+                    container.removeView(container.findViewWithTag(checkerName))
+                    container.addView(checker.draw(container, x, y))
+                }
+                return true
             }
         }
-
+        return false
     }
 }
