@@ -14,7 +14,7 @@
             android:layout_height="1040px"
             android:layout_marginStart="20px"
             android:layout_marginTop="440px"
-            android:background="@drawable/deck_code"
+            android:background="@drawable/deck"
             android:layout_width="1040px"/>
 
     <TextView

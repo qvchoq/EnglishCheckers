@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EnglishCheckers</string>
+    <string name="app_name">English Checkers</string>
     <string name="startButtonText">start</string>
     <string name="playerTurnOne">Turn Player 1</string>
     <string name="playerTurnTwo">Turn Player 2</string>

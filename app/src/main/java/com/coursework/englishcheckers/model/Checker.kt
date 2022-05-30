@@ -39,17 +39,11 @@ class Checker(
 
     fun draw(container:FrameLayout, x: Int, y: Int): ImageView {
         return ImageView(container.context).apply {
-            if (color == 2 && !queen) {
-                this.setImageResource(R.drawable.checker_white)
-            }
-            if (color == 1 && !queen) {
-                this.setImageResource(R.drawable.checker_red)
-            }
-            if (color == 2 && queen) {
-                this.setImageResource(R.drawable.checker_white_queen)
-            }
-            if (color == 1 && queen) {
-                this.setImageResource(R.drawable.checker_red_queen)
+            when {
+                color == 2 && !queen -> this.setImageResource(R.drawable.checker_white)
+                color == 2 && queen -> this.setImageResource(R.drawable.checker_white_queen)
+                color == 1 && !queen -> this.setImageResource(R.drawable.checker_red)
+                color == 1 && queen -> this.setImageResource(R.drawable.checker_red_queen)
             }
             this.tag = pos
             this.layoutParams = FrameLayout.LayoutParams(110,110)

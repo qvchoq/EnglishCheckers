@@ -24,8 +24,6 @@ val mapCellListY = mapOf(
     1360..1460 to 1360
 )
 
-
-
 class Converter {
 
     private var isRightPlace = false

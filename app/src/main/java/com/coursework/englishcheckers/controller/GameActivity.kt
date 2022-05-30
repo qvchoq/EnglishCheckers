@@ -92,8 +92,8 @@ class GameActivity : AppCompatActivity() {
                             prevCellName = Converter().coordinateToCellName(fromCell.first, fromCell.second)
 
                             //We check the need to beat.
-                            Game().defaultCheckerNeedToBeat(checkersOnBoard[prevCellName]?.getColor())
-                            Game().queenCheckerNeedToBeat(checkersOnBoard[prevCellName]?.getColor())
+                            Game().checkDefaultCheckerNeedToBeat(checkersOnBoard[prevCellName]?.getColor())
+                            Game().checkQueenCheckerNeedToBeat(checkersOnBoard[prevCellName]?.getColor())
 
                             //We highlight the cells of the moves of the player whose turn is.
                             if (playerTurn == checkersOnBoard[prevCellName]?.getColor()) {
@@ -123,10 +123,10 @@ class GameActivity : AppCompatActivity() {
                                 } else {
                                     if (checkersOnBoard[prevCellName]?.getQueenInfo() == false) {
                                         possibleMoves[prevCellName] =
-                                            Game().possibleMovesForDefaultChecker(prevCellName, playerTurn)
+                                            Game().getPossibleMovesForDefaultChecker(prevCellName, playerTurn)
                                     } else {
                                         possibleMoves[prevCellName] =
-                                            Game().possibleMovesForQueenChecker(prevCellName)
+                                            Game().getPossibleMovesForQueenChecker(prevCellName)
                                     }
                                     for ((_, moveList) in possibleMoves) {
                                         for (move in moveList) {
@@ -303,9 +303,9 @@ class GameActivity : AppCompatActivity() {
                                 if (hasBeat && !replacedToQueen) {
 
                                     if (checkersOnBoard[newCellName]?.getQueenInfo() == false) {
-                                        Game().defaultCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColor())
+                                        Game().checkDefaultCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColor())
                                     } else {
-                                        Game().queenCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColor())
+                                        Game().checkQueenCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColor())
                                     }
 
                                     if (!needToBeatMap.containsKey(newCellName) || replacedToQueen) {
@@ -391,7 +391,7 @@ class GameActivity : AppCompatActivity() {
      * Show dialog box with end game.
      */
 
-    @SuppressLint("ClickableViewAccessibility", "ResourceType")
+    @SuppressLint("ClickableViewAccessibility")
     private fun showDialogGameEnd() {
         val dialog = Dialog(this)
 

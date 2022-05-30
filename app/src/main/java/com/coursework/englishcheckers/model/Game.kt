@@ -4,6 +4,7 @@ import android.app.Activity
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.coursework.englishcheckers.*
+import com.coursework.englishcheckers.view.Board
 import com.coursework.englishcheckers.view.Board.Companion.board
 import com.coursework.englishcheckers.view.Board.Companion.cellToLetter
 import com.coursework.englishcheckers.view.Board.Companion.checkersOnBoard
@@ -11,9 +12,11 @@ import com.coursework.englishcheckers.view.Board.Companion.checkersOnBoard
 class Game {
 
     companion object {
+
         var winner = 0
         var playerTurn = 1
         var needToBeatMap = mutableMapOf<String, String>()
+
     }
 
     private val borderOfBoardX = 30..1040
@@ -23,7 +26,7 @@ class Game {
      * Check potential further move for default checker.
      */
 
-    private fun potentialFurtherMovesForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): Pair<String, String> {
+    private fun getPotentialFurtherMovesForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): Pair<String, String> {
 
         val letter = Converter().cellNameSeparate(chosenCheckerCellName).first
         val integer = Converter().cellNameSeparate(chosenCheckerCellName).second
@@ -77,12 +80,12 @@ class Game {
      * Check possible moves for default checker.
      */
 
-    fun possibleMovesForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): List<String> {
+    fun getPossibleMovesForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): List<String> {
         val result = mutableListOf<String>()
-        val possibleMoves = potentialFurtherMovesForDefaultChecker(chosenCheckerCellName, colorChecker)
+        val possibleMoves = getPotentialFurtherMovesForDefaultChecker(chosenCheckerCellName, colorChecker)
 
-        if (checkEmptyCell(possibleMoves.first)) result.add(possibleMoves.first)
-        if (checkEmptyCell(possibleMoves.second)) result.add(possibleMoves.second)
+        if (Board().checkEmptyCell(possibleMoves.first)) result.add(possibleMoves.first)
+        if (Board().checkEmptyCell(possibleMoves.second)) result.add(possibleMoves.second)
 
         return result.toList()
     }
@@ -91,7 +94,7 @@ class Game {
      * Check default checker need to beat.
      */
 
-    fun defaultCheckerNeedToBeat(colorChecker: Int?) {
+    fun checkDefaultCheckerNeedToBeat(colorChecker: Int?) {
 
         var possibleMoves: Pair<String, String>
 
@@ -108,7 +111,7 @@ class Game {
             //For checker only who making turn.
             if (checkersOnBoard[checkerOnBoardName]?.getColor() == colorChecker) {
 
-                possibleMoves = potentialFurtherMovesForDefaultChecker(checkerOnBoardName, colorChecker)
+                possibleMoves = getPotentialFurtherMovesForDefaultChecker(checkerOnBoardName, colorChecker)
 
                 if (colorChecker == 1) {
                     //If the checker is on the two leftmost cells, in the top row
@@ -208,7 +211,7 @@ class Game {
      * Check potential further move for default checker.
      */
 
-    private fun potentialFurtherMovesForQueenChecker(chosenQueenCheckerCellName: String): List<String> {
+    private fun getPotentialFurtherMovesForQueenChecker(chosenQueenCheckerCellName: String): List<String> {
 
         val potentialMoves = mutableListOf<String>()
         val result = mutableListOf<String>()
@@ -246,13 +249,13 @@ class Game {
      * Check possible moves for queen checker.
      */
 
-    fun possibleMovesForQueenChecker(chosenCheckerCellName: String): List<String> {
+    fun getPossibleMovesForQueenChecker(chosenCheckerCellName: String): List<String> {
 
         val result = mutableListOf<String>()
-        val possibleMoves = potentialFurtherMovesForQueenChecker(chosenCheckerCellName)
+        val possibleMoves = getPotentialFurtherMovesForQueenChecker(chosenCheckerCellName)
 
         for (move in possibleMoves) {
-            if (checkEmptyCell(move)) {
+            if (Board().checkEmptyCell(move)) {
                 result.add(move)
             }
         }
@@ -264,7 +267,7 @@ class Game {
      * Check queen checker need to beat.
      */
 
-    fun queenCheckerNeedToBeat(colorChecker: Int?) {
+    fun checkQueenCheckerNeedToBeat(colorChecker: Int?) {
 
         //Player queens on board
         val queensOnBoard = mutableListOf<String>()
@@ -290,7 +293,7 @@ class Game {
 
         for (queenName in queensOnBoard) {
 
-                potentialMoves = potentialFurtherMovesForQueenChecker(queenName)
+                potentialMoves = getPotentialFurtherMovesForQueenChecker(queenName)
 
                 queenLetter = Converter().cellNameSeparate(queenName).first
                 queenInteger = Converter().cellNameSeparate(queenName).second
@@ -353,14 +356,6 @@ class Game {
     }
 
     /*
-     * Check if cell is empty.
-     */
-
-    private fun checkEmptyCell(pos: String): Boolean {
-        return (board[pos]?.getColorInfo() == 0)
-    }
-
-    /*
      * Get the cell between two cell names diagonally.
      */
 
@@ -409,8 +404,6 @@ class Game {
         var intY = 0
         var xIsRightPlace = false
         var yIsRightPlace = false
-
-
         for ((key, value) in mapCellListX) {
             if (x in key) {
                 xIsRightPlace = true
@@ -425,10 +418,13 @@ class Game {
 
             }
         }
+
+        val resultName: String = Converter().coordinateToCellName(intX, intY)
+
         return xIsRightPlace &&
                 yIsRightPlace &&
-                (checkersOnBoard[Converter().coordinateToCellName(intX, intY)] != null) &&
-                (checkersOnBoard[Converter().coordinateToCellName(intX, intY)]?.getColor() == playerTurn)
+                (checkersOnBoard[resultName] != null) &&
+                (checkersOnBoard[resultName]?.getColor() == playerTurn)
     }
 
     /*
@@ -541,9 +537,9 @@ class Game {
         for (checkerName in checkersOnBoard.keys) {
             if (checkersOnBoard[checkerName]?.getColor() == player) {
                 if (checkersOnBoard[checkerName]?.getQueenInfo() == true) {
-                    allPossibleMovesForPlayer += possibleMovesForQueenChecker(checkerName)
+                    allPossibleMovesForPlayer += getPossibleMovesForQueenChecker(checkerName)
                 } else {
-                    allPossibleMovesForPlayer += possibleMovesForDefaultChecker(checkerName, player)
+                    allPossibleMovesForPlayer += getPossibleMovesForDefaultChecker(checkerName, player)
                 }
             }
         }
@@ -558,6 +554,10 @@ class Game {
 
         return (allPossibleMovesForPlayer.isEmpty())
     }
+
+    /*
+     * Reset all variables.
+     */
 
     fun clearAllData() {
         winner = 0

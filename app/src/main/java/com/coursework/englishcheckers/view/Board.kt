@@ -11,19 +11,11 @@ import com.coursework.englishcheckers.model.Converter
 class Board {
 
     companion object {
+
         var board = mutableMapOf<String, BoardCell>()
         var checkersOnBoard = mutableMapOf<String, Checker?>()
+        val cellToLetter = listOf('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
 
-        val cellToLetter = listOf(
-            'a',
-            'b',
-            'c',
-            'd',
-            'e',
-            'f',
-            'g',
-            'h'
-        )
     }
 
     /*
@@ -90,7 +82,7 @@ class Board {
         val cell = ImageView(container.context).apply {
             this.tag = cellName+'h'
             this.setImageResource(R.drawable.highlight)
-            this.layoutParams = FrameLayout.LayoutParams(131,132)
+            this.layoutParams = FrameLayout.LayoutParams(132,132)
             this.translationX = Converter().cellNameToCoordinate(cellName).first.toFloat() - 11
             this.translationY = Converter().cellNameToCoordinate(cellName).second.toFloat() - 11
         }
@@ -99,6 +91,14 @@ class Board {
             container.addView(cell)
         }
 
+    }
+
+    /*
+     * Check if cell is empty.
+     */
+
+    fun checkEmptyCell(pos: String): Boolean {
+        return (board[pos]?.getColorInfo() == 0)
     }
 
     /*
@@ -126,7 +126,6 @@ class Board {
                 container.addView(checker.draw(container, x, y))
             }
         }
-
 
     }
 }
