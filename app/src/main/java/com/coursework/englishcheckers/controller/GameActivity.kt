@@ -108,10 +108,10 @@ class GameActivity : AppCompatActivity() {
                                             if (needToBeatMap[key] != null) {
 
                                                 //If the selected cell is not already highlighted.
-                                                if (board[needToBeatMap[key]]?.getHighlightInfo() == false) {
-
-                                                    needToBeatMap[key]?.let { Board().setHighlightCell(container, it) }
-
+                                                for (value in needToBeatMap[key]!!) {
+                                                    if (board[value]?.getHighlightInfo() == false) {
+                                                        Board().setHighlightCell(container, value)
+                                                    }
                                                 }
 
                                             }
@@ -182,14 +182,16 @@ class GameActivity : AppCompatActivity() {
 
                                         }
                                         //The cell to move to.
-                                        needToBeatMap[key]?.let { mustToMoveList.add(it) }
+                                        for (value in needToBeatMap[key]!!) {
+                                            mustToMoveList.add(value)
+                                        }
                                     }
                                 }
 
                                 if (beatCondition) {
 
                                     //If the cell where you need to move to beat matches the cell where we put, then move.
-                                    if (mustToMoveList.contains(newCellName) && needToBeatMap[prevCellName] == newCellName) {
+                                    if (mustToMoveList.contains(newCellName) && needToBeatMap[prevCellName]?.contains(newCellName) == true) {
 
                                         val beatenChecker =  Game().getCellBetweenTwo(prevCellName, newCellName)
 

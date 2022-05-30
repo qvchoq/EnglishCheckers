@@ -15,7 +15,7 @@ class Game {
 
         var winner = 0
         var playerTurn = 1
-        var needToBeatMap = mutableMapOf<String, String>()
+        var needToBeatMap = mutableMapOf<String, MutableList<String>>()
 
     }
 
@@ -129,7 +129,7 @@ class Game {
                                 move = "$checkLetter$checkInteger"
                                 //If the calculated cell is empty
                                 if (board[move]?.getColorInfo() == 0) {
-                                    needToBeatMap[checkerOnBoardName] = move
+                                    needToBeatMap[checkerOnBoardName] = mutableListOf(move)
                                 }
 
                             }
@@ -149,8 +149,13 @@ class Game {
                                 checkInteger = possibleMoveInteger + 1
                                 move = "$checkLetter$checkInteger"
                                 //If the calculated cell is empty
+
                                 if (board[move]?.getColorInfo() == 0) {
-                                    needToBeatMap[checkerOnBoardName] = move
+                                    if (needToBeatMap[checkerOnBoardName].isNullOrEmpty()) {
+                                        needToBeatMap[checkerOnBoardName] = mutableListOf(move)
+                                    } else if (needToBeatMap[checkerOnBoardName]?.contains(move) == false) {
+                                        needToBeatMap[checkerOnBoardName]!!.add(move)
+                                    }
                                 }
 
                             }
@@ -174,7 +179,7 @@ class Game {
                                 move = "$checkLetter$checkInteger"
                                 //If the calculated cell is empty
                                 if (board[move]?.getColorInfo() == 0) {
-                                    needToBeatMap[checkerOnBoardName] = move
+                                    needToBeatMap[checkerOnBoardName] = mutableListOf(move)
                                 }
 
                             }
@@ -195,7 +200,11 @@ class Game {
                                 move = "$checkLetter$checkInteger"
                                 //If the calculated cell is empty
                                 if (board[move]?.getColorInfo() == 0) {
-                                    needToBeatMap[checkerOnBoardName] = move
+                                    if (needToBeatMap[checkerOnBoardName].isNullOrEmpty()) {
+                                        needToBeatMap[checkerOnBoardName] = mutableListOf(move)
+                                    } else if (needToBeatMap[checkerOnBoardName]?.contains(move) == false) {
+                                        needToBeatMap[checkerOnBoardName]!!.add(move)
+                                    }
                                 }
 
                             }
@@ -204,7 +213,7 @@ class Game {
                 }
             }
         }
-
+        println("needtobeatmap : $needToBeatMap")
     }
 
     /*
@@ -312,7 +321,11 @@ class Game {
                                         checkInteger = possibleMoveInteger - 1
                                         move = "$checkLetter$checkInteger"
                                         if (board[move]?.getColorInfo() == 0) {
-                                            needToBeatMap[queenName] = move
+                                            if (needToBeatMap[queenName].isNullOrEmpty()) {
+                                                needToBeatMap[queenName] = mutableListOf(move)
+                                            } else if (needToBeatMap[queenName]?.contains(move) == false) {
+                                                needToBeatMap[queenName]!!.add(move)
+                                            }
                                         }
                                     }
                                 }
@@ -323,7 +336,11 @@ class Game {
                                         checkInteger = possibleMoveInteger + 1
                                         move = "$checkLetter$checkInteger"
                                         if (board[move]?.getColorInfo() == 0) {
-                                            needToBeatMap[queenName] = move
+                                            if (needToBeatMap[queenName].isNullOrEmpty()) {
+                                                needToBeatMap[queenName] = mutableListOf(move)
+                                            } else if (needToBeatMap[queenName]?.contains(move) == false) {
+                                                needToBeatMap[queenName]!!.add(move)
+                                            }
                                         }
                                     }
                                 }
@@ -334,7 +351,11 @@ class Game {
                                         checkInteger = possibleMoveInteger - 1
                                         move = "$checkLetter$checkInteger"
                                         if (board[move]?.getColorInfo() == 0) {
-                                            needToBeatMap[queenName] = move
+                                            if (needToBeatMap[queenName].isNullOrEmpty()) {
+                                                needToBeatMap[queenName] = mutableListOf(move)
+                                            } else if (needToBeatMap[queenName]?.contains(move) == false) {
+                                                needToBeatMap[queenName]!!.add(move)
+                                            }
                                         }
                                     }
                                 }
@@ -345,7 +366,11 @@ class Game {
                                         checkInteger = possibleMoveInteger + 1
                                         move = "$checkLetter$checkInteger"
                                         if (board[move]?.getColorInfo() == 0) {
-                                            needToBeatMap[queenName] = move
+                                            if (needToBeatMap[queenName].isNullOrEmpty()) {
+                                                needToBeatMap[queenName] = mutableListOf(move)
+                                            } else if (needToBeatMap[queenName]?.contains(move) == false) {
+                                                needToBeatMap[queenName]!!.add(move)
+                                            }
                                         }
                                     }
                                 }
@@ -532,25 +557,22 @@ class Game {
     fun endGameWithWinnerByNoPossibleMoves(checkPlayer: Int): Boolean {
 
         val allPossibleMovesForPlayer = mutableListOf<String>()
-        val player = if (checkPlayer == 1) 2 else 1
 
         for (checkerName in checkersOnBoard.keys) {
-            if (checkersOnBoard[checkerName]?.getColor() == player) {
+            if (checkersOnBoard[checkerName]?.getColor() == checkPlayer) {
                 if (checkersOnBoard[checkerName]?.getQueenInfo() == true) {
                     allPossibleMovesForPlayer += getPossibleMovesForQueenChecker(checkerName)
                 } else {
-                    allPossibleMovesForPlayer += getPossibleMovesForDefaultChecker(checkerName, player)
+                    allPossibleMovesForPlayer += getPossibleMovesForDefaultChecker(checkerName, checkPlayer)
                 }
             }
         }
 
         if (allPossibleMovesForPlayer.isEmpty()) {
-            if (playerTurn == 1) {
-                winner = 1
-            } else {
-                winner = 2
-            }
+            winner = if (playerTurn == 1) 2 else 1
         }
+
+        println("allPossibleMovesForPlayer : $allPossibleMovesForPlayer")
 
         return (allPossibleMovesForPlayer.isEmpty())
     }
