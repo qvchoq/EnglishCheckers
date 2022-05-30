@@ -1,6 +1,6 @@
 # English Checkers
-___
 ## Rules
+___
 * Red checkers make the first turn. 
 * "Default" checkers can move diagonally one cell forward and beat only forward. 
 * The queen can move one cell diagonally forward or backward, when beaten, it moves only through one cell in any direction.
@@ -10,6 +10,7 @@ ___
 * After 30 turns without beating - draw.
 ___
 ## Documentation
+___
 ### Description
 
 English checkers for 2 players on one phone.
