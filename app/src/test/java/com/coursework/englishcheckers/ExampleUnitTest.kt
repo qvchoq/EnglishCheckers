@@ -2,6 +2,7 @@ package com.coursework.englishcheckers
 
 import com.coursework.englishcheckers.model.BoardCell
 import com.coursework.englishcheckers.model.Checker
+import com.coursework.englishcheckers.model.Converter
 import com.coursework.englishcheckers.model.Game
 import com.coursework.englishcheckers.model.Game.Companion.needToBeatMap
 import com.coursework.englishcheckers.view.Board.Companion.board
@@ -47,7 +48,7 @@ class Test {
          *  a   [0, 0, 0, 0, 0, 0, 0, 0]
          *  b   [0, 0, 0, 0, 0, 0, 0, 0]
          *  c   [0, 2, 0, 0, 0, 0, 0, 0]
-         *  d   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  d   [x, 0, x, 0, 0, 0, 0, 0]
          *  e   [0, 0, 0, 0, 0, 0, 0, 0]
          *  f   [0, 0, 0, 0, 0, 0, 0, 0]
          *  g   [0, 0, 0, 0, 0, 0, 0, 0]
@@ -55,13 +56,14 @@ class Test {
          *
          */
         assertEquals(Pair("d1", "d3"), Game().getPotentialFurtherMovesForDefaultChecker("c2",2))
+
         /* Example:
          *       1  2  3  4  5  6  7  8
          *
          *  a   [0, 0, 0, 0, 0, 0, 0, 0]
          *  b   [0, 0, 0, 0, 0, 0, 0, 0]
          *  c   [0, 0, 0, 0, 0, 0, 0, 2]
-         *  d   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  d   [0, 0, 0, 0, 0, 0, x, 0]
          *  e   [0, 0, 0, 0, 0, 0, 0, 0]
          *  f   [0, 0, 0, 0, 0, 0, 0, 0]
          *  g   [0, 0, 0, 0, 0, 0, 0, 0]
@@ -69,6 +71,7 @@ class Test {
          *
          */
         assertEquals(Pair("d7", "d0"), Game().getPotentialFurtherMovesForDefaultChecker("c8",2))
+
         /* Example:
          *       1  2  3  4  5  6  7  8
          *
@@ -76,13 +79,14 @@ class Test {
          *  b   [0, 0, 0, 0, 0, 0, 0, 0]
          *  c   [0, 0, 0, 0, 0, 0, 0, 0]
          *  d   [0, 0, 0, 0, 0, 0, 0, 0]
-         *  e   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  e   [0, x, 0, 0, 0, 0, 0, 0]
          *  f   [1, 0, 0, 0, 0, 0, 0, 0]
          *  g   [0, 0, 0, 0, 0, 0, 0, 0]
          *  h   [0, 0, 0, 0, 0, 0, 0, 0]
          *
          */
         assertEquals(Pair("e0", "e2"), Game().getPotentialFurtherMovesForDefaultChecker("f1",1))
+
         /* Example:
          *       1  2  3  4  5  6  7  8
          *
@@ -90,7 +94,7 @@ class Test {
          *  b   [0, 0, 0, 0, 0, 0, 0, 0]
          *  c   [0, 0, 0, 0, 0, 0, 0, 0]
          *  d   [0, 0, 0, 0, 0, 0, 0, 0]
-         *  e   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  e   [0, 0, 0, 0, 0, x, 0, x]
          *  f   [0, 0, 0, 0, 0, 0, 1, 0]
          *  g   [0, 0, 0, 0, 0, 0, 0, 0]
          *  h   [0, 0, 0, 0, 0, 0, 0, 0]
@@ -109,7 +113,7 @@ class Test {
          *  a   [0, 0, 0, 0, 0, 0, 0, 0]
          *  b   [0, 0, 0, 0, 0, 0, 0, 0]
          *  c   [0, 0, 0, 2, 0, 0, 0, 0]
-         *  d   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  d   [0, 0, x, 0, x, 0, 0, 0]
          *  e   [0, 0, 0, 0, 0, 0, 0, 0]
          *  f   [0, 0, 0, 0, 0, 0, 0, 0]
          *  g   [0, 0, 0, 0, 0, 0, 0, 0]
@@ -127,7 +131,7 @@ class Test {
          *  b   [0, 0, 0, 0, 0, 0, 0, 0]
          *  c   [0, 0, 0, 0, 0, 0, 0, 0]
          *  d   [2, 0, 0, 0, 2, 0, 0, 0]
-         *  e   [0, 2, 0, 0, 0, 0, 0, 0]
+         *  e   [0, 2, 0, x, 0, 0, 0, 0]
          *  f   [0, 0, 1, 0, 0, 0, 0, 0]
          *  g   [0, 0, 0, 0, 0, 0, 0, 0]
          *  h   [0, 0, 0, 0, 0, 0, 0, 0]
@@ -165,7 +169,7 @@ class Test {
          *  a   [0, 0, 0, 0, 0, 0, 0, 0]
          *  b   [0, 0, 0, 0, 0, 0, 0, 0]
          *  c   [0, 0, 0, 0, 0, 0, 0, 0]
-         *  d   [2, 0, 0, 0, 0, 0, 0, 0]
+         *  d   [2, 0, 0, 0, x, 0, 0, 0]
          *  e   [0, 2, 0, 2, 0, 0, 0, 0]
          *  f   [0, 0, 1, 0, 0, 0, 0, 0]
          *  g   [0, 1, 0, 1, 0, 0, 0, 0]
@@ -186,7 +190,7 @@ class Test {
          *  d   [0, 2, 0, 0, 0, 2, 0, 0]
          *  e   [0, 0, 2, 0, 2, 0, 0, 0]
          *  f   [0, 0, 0, 1, 0, 0, 0, 0]
-         *  g   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  g   [0, 0, x, 0, x, 0, 0, 0]
          *  h   [0, 0, 0, 0, 0, 0, 0, 0]
          *
          */
@@ -201,7 +205,7 @@ class Test {
          *  a   [0, 0, 0, 0, 0, 0, 0, 0]
          *  b   [0, 0, 0, 0, 0, 0, 0, 0]
          *  c   [0, 0, 0, 0, 0, 0, 0, 0]
-         *  d   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  d   [0, x, 0, 0, 0, x, 0, 0]
          *  e   [0, 0, 2, 0, 2, 0, 0, 0]
          *  f   [0, 0, 0, 1, 0, 0, 0, 0]
          *  g   [0, 0, 0, 0, 0, 0, 0, 0]
@@ -221,9 +225,9 @@ class Test {
          *       1  2  3  4  5  6  7  8
          *
          *  a   [0, 0, 0, 0, 0, 0, 0, 0]
-         *  b   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [x, 0, x, 0, 0, 0, 0, 0]
          *  c   [0, 1, 0, 0, 0, 0, 0, 0]
-         *  d   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  d   [x, 0, x, 0, 0, 0, 0, 0]
          *  e   [0, 0, 0, 0, 0, 0, 0, 0]
          *  f   [0, 0, 0, 0, 0, 0, 0, 0]
          *  g   [0, 0, 0, 0, 0, 0, 0, 0]
@@ -238,7 +242,7 @@ class Test {
          *       1  2  3  4  5  6  7  8
          *
          *  a   [0, 0, 0, 0, 0, 0, 0, 1]
-         *  b   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [0, 0, 0, 0, 0, 0, x, 0]
          *  c   [0, 0, 0, 0, 0, 0, 0, 0]
          *  d   [0, 0, 0, 0, 0, 0, 0, 0]
          *  e   [0, 0, 0, 0, 0, 0, 0, 0]
@@ -259,9 +263,9 @@ class Test {
          *  c   [0, 0, 0, 0, 0, 0, 0, 0]
          *  d   [0, 0, 0, 0, 0, 0, 0, 0]
          *  e   [0, 0, 0, 0, 0, 0, 0, 0]
-         *  f   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  f   [0, 0, 0, 0, 0, 0, x, 0]
          *  g   [0, 0, 0, 0, 0, 0, 0, 1]
-         *  h   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  h   [0, 0, 0, 0, 0, 0, x, 0]
          *
          */
         fillBoard(mapOf("g8" to 1, "h7" to 0, "f7" to 0))
@@ -272,7 +276,7 @@ class Test {
          *       1  2  3  4  5  6  7  8
          *
          *  a   [0, 0, 0, 1, 0, 0, 0, 0]
-         *  b   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [0, 0, x, 0, x, 0, 0, 0]
          *  c   [0, 0, 0, 0, 0, 0, 0, 0]
          *  d   [0, 0, 0, 0, 0, 0, 0, 0]
          *  e   [0, 0, 0, 0, 0, 0, 0, 0]
@@ -292,7 +296,7 @@ class Test {
          *       1  2  3  4  5  6  7  8
          *
          *  a   [0, 0, 0, 0, 0, 0, 0, 0]
-         *  b   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [x, 0, x, 0, 0, 0, 0, 0]
          *  c   [0, 1, 0, 0, 0, 0, 0, 0]
          *  d   [2, 0, 2, 0, 0, 0, 0, 0]
          *  e   [0, 0, 0, 0, 0, 0, 0, 0]
@@ -332,7 +336,7 @@ class Test {
          *  e   [0, 0, 0, 0, 0, 0, 0, 0]
          *  f   [0, 0, 0, 0, 0, 0, 2, 0]
          *  g   [0, 0, 0, 0, 0, 0, 0, 1]
-         *  h   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  h   [0, 0, 0, 0, 0, 0, x, 0]
          *
          */
         fillBoard(mapOf("g8" to 1, "h7" to 0, "f7" to 2))
@@ -343,7 +347,7 @@ class Test {
          *       1  2  3  4  5  6  7  8
          *
          *  a   [0, 0, 0, 1, 0, 0, 0, 0]
-         *  b   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [0, 0, x, 0, x, 0, 0, 0]
          *  c   [0, 0, 0, 0, 0, 0, 0, 0]
          *  d   [0, 0, 0, 0, 0, 0, 0, 0]
          *  e   [0, 0, 0, 0, 0, 0, 0, 0]
@@ -359,6 +363,186 @@ class Test {
 
     @Test
     fun testCheckQueenNeedToBeat() {
+        /* Example:
+         *       1  2  3  4  5  6  7  8
+         *
+         *  a   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  c   [0, 1, 0, 0, 0, 0, 0, 0]
+         *  d   [2, 0, 2, 0, 0, 0, 0, 0]
+         *  e   [0, 0, 0, x, 0, 0, 0, 0]
+         *  f   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  g   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  h   [0, 0, 0, 0, 0, 0, 0, 0]
+         *
+         */
+        fillBoard(mapOf("c2" to 1,"b1" to 0, "b3" to 0, "d1" to 2, "d3" to 2, "e4" to 0))
+        checkersOnBoard["c2"]?.setQueen(true)
+        Game().checkQueenNeedToBeat(1)
+        assertEquals(mapOf("c2" to listOf("e4")), needToBeatMap)
+        clearBoard(listOf("c2", "b1", "b3", "d1", "d3", "e4"))
+
+        /* Example:
+         *       1  2  3  4  5  6  7  8
+         *
+         *  a   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  c   [0, x, 0, 0, 0, x, 0, 0]
+         *  d   [0, 0, 1, 0, 1, 0, 0, 0]
+         *  e   [0, 0, 0, 2, 0, 0, 0, 0]
+         *  f   [0, 0, 1, 0, 1, 0, 0, 0]
+         *  g   [0, x, 0, 0, 0, x, 0, 0]
+         *  h   [0, 0, 0, 0, 0, 0, 0, 0]
+         *
+         */
+        fillBoard(mapOf("e4" to 2, "d3" to 1, "d5" to 1, "f3" to 1, "f5" to 1, "g2" to 0, "g6" to 0, "c2" to 0, "c6" to 0))
+        checkersOnBoard["e4"]?.setQueen(true)
+        Game().checkQueenNeedToBeat(2)
+        assertEquals(mapOf("e4" to listOf("c2", "c6", "g2", "g6")), needToBeatMap)
+        clearBoard(listOf("e4", "d3", "d5", "f3", "f5", "g2", "g6", "c2", "c6"))
+    }
+
+    @Test
+    fun testGetCellBetweenTwo() {
+        /* Example:
+         *       1  2  3  4  5  6  7  8
+         *
+         *  a   [1, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [0, x, 0, 0, 0, 0, 0, 0]
+         *  c   [0, 0, 1, 0, 0, 0, 0, 0]
+         *  d   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  e   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  f   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  g   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  h   [0, 0, 0, 0, 0, 0, 0, 0]
+         *
+         */
+        assertEquals("b2", Game().getCellBetweenTwo("a1", "c3"))
+
+        /* Example:
+         *       1  2  3  4  5  6  7  8
+         *
+         *  a   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  c   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  d   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  e   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  f   [0, 0, 0, 0, 1, 0, 0, 0]
+         *  g   [0, 0, 0, x, 0, 0, 0, 0]
+         *  h   [0, 0, 1, 0, 0, 0, 0, 0]
+         *
+         */
+        assertEquals("g4", Game().getCellBetweenTwo("h3", "f5"))
+    }
+
+    @Test
+    fun testEndGameWithWinnerByBeatingAllCheckers() {
+
+        fillBoard(mapOf("c2" to 1,"b1" to 2))
+        assertEquals(false, Game().endGameWithWinnerByBeatingAllCheckers())
+
+        fillBoard(mapOf("c2" to 0,"b1" to 0))
+        assertEquals(false, Game().endGameWithWinnerByBeatingAllCheckers())
+
+        fillBoard(mapOf("c2" to 1,"b1" to 0))
+        assertEquals(true, Game().endGameWithWinnerByBeatingAllCheckers())
+
+        fillBoard(mapOf("c2" to 2,"b1" to 0))
+        assertEquals(true, Game().endGameWithWinnerByBeatingAllCheckers())
+    }
+
+    @Test
+    fun testEndGameWithWinnerByNoPossibleMoves() {
+        /* Example:
+         *       1  2  3  4  5  6  7  8
+         *
+         *  a   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  c   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  d   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  e   [0, 0, 0, 0, 0, 2, 0, 0]
+         *  f   [0, 0, 0, 0, 0, 0, 2, 0]
+         *  g   [0, 0, 0, 0, 0, 0, 0, 1]
+         *  h   [0, 0, 0, 0, 0, 0, 0, 0]
+         *
+         */
+        fillBoard(mapOf("g8" to 1, "f7" to 2, "e6" to 2))
+        assertEquals(true, Game().endGameWithWinnerByNoPossibleMoves(1))
+        clearBoard(listOf("g8", "f7", "e6"))
+
+        /* Example:
+         *       1  2  3  4  5  6  7  8
+         *
+         *  a   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  c   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  d   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  e   [0, 0, 0, 0, 0, 2, 0, 0]
+         *  f   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  g   [0, 0, 0, 0, 0, 0, 0, 1]
+         *  h   [0, 0, 0, 0, 0, 0, 0, 0]
+         *
+         */
+        fillBoard(mapOf("g8" to 1, "f7" to 0, "e6" to 2))
+        assertEquals(false, Game().endGameWithWinnerByNoPossibleMoves(1))
+        clearBoard(listOf("g8", "f7", "e6"))
+
+        /* Example:
+         *       1  2  3  4  5  6  7  8
+         *
+         *  a   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  b   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  c   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  d   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  e   [0, 0, 0, 0, 0, 0, 0, 0]
+         *  f   [0, 0, 0, 0, 0, 0, 2, 0]
+         *  g   [0, 0, 0, 0, 0, 0, 0, 1]
+         *  h   [0, 0, 0, 0, 0, 0, 0, 0]
+         *
+         */
+        needToBeatMap["g8"] = mutableListOf("e6")
+        fillBoard(mapOf("g8" to 1, "f7" to 2, "e6" to 0))
+        assertEquals(true, Game().endGameWithWinnerByNoPossibleMoves(2))
+        clearBoard(listOf("g8", "f7", "e6"))
+    }
+
+    @Test
+    fun testCoordinateToCell() {
+
+        assertEquals((30 to 450), Converter().coordinateToCell(140, 460))
+        assertEquals((160 to 710), Converter().coordinateToCell(256, 780))
+        assertEquals((680 to 710), Converter().coordinateToCell(765, 744))
+        assertEquals((940 to 1360), Converter().coordinateToCell(957, 1401))
 
     }
+
+    @Test
+    fun testCoordinateToCellName() {
+
+        assertEquals("a1", Converter().coordinateToCellName(30, 450))
+        assertEquals("c2", Converter().coordinateToCellName(160, 710))
+        assertEquals("c6", Converter().coordinateToCellName(680, 710))
+        assertEquals("h8", Converter().coordinateToCellName(940, 1360))
+    }
+
+    @Test
+    fun testCellNameToCoordinate() {
+
+        assertEquals((30 to 450), Converter().cellNameToCoordinate("a1"))
+        assertEquals((160 to 710), Converter().cellNameToCoordinate("c2"))
+        assertEquals((680 to 710), Converter().cellNameToCoordinate("c6"))
+        assertEquals((940 to 1360), Converter().cellNameToCoordinate("h8"))
+
+    }
+
+    @Test
+    fun testCellNameSeparate() {
+
+        assertEquals(('a' to 1), Converter().cellNameSeparate("a1"))
+        assertEquals(('c' to 3), Converter().cellNameSeparate("c3"))
+        assertEquals(('f' to 6), Converter().cellNameSeparate("f6"))
+        assertEquals(('e' to 8), Converter().cellNameSeparate("e8"))
+
+    }
+
 }
