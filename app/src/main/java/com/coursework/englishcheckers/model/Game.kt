@@ -26,7 +26,7 @@ class Game {
      * Check potential further move for default checker.
      */
 
-    private fun getPotentialFurtherMovesForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): Pair<String, String> {
+    fun getPotentialFurtherMovesForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): Pair<String, String> {
 
         val letter = Converter().cellNameSeparate(chosenCheckerCellName).first
         val integer = Converter().cellNameSeparate(chosenCheckerCellName).second
@@ -82,12 +82,12 @@ class Game {
 
     fun getPossibleMovesForDefaultChecker(chosenCheckerCellName: String, colorChecker: Int?): List<String> {
         val result = mutableListOf<String>()
-        val possibleMoves = getPotentialFurtherMovesForDefaultChecker(chosenCheckerCellName, colorChecker)
+        val potentialMoves = getPotentialFurtherMovesForDefaultChecker(chosenCheckerCellName, colorChecker)
 
-        if (Board().checkEmptyCell(possibleMoves.first)) result.add(possibleMoves.first)
-        if (Board().checkEmptyCell(possibleMoves.second)) result.add(possibleMoves.second)
+        if (Board().checkEmptyCell(potentialMoves.first)) result.add(potentialMoves.first)
+        if (Board().checkEmptyCell(potentialMoves.second)) result.add(potentialMoves.second)
 
-        return result.toList()
+        return result
     }
 
     /*
@@ -213,14 +213,13 @@ class Game {
                 }
             }
         }
-        println("needtobeatmap : $needToBeatMap")
     }
 
     /*
      * Check potential further move for default checker.
      */
 
-    private fun getPotentialFurtherMovesForQueenChecker(chosenQueenCheckerCellName: String): List<String> {
+    fun getPotentialFurtherMovesForQueen(chosenQueenCheckerCellName: String): List<String> {
 
         val potentialMoves = mutableListOf<String>()
         val result = mutableListOf<String>()
@@ -258,25 +257,25 @@ class Game {
      * Check possible moves for queen checker.
      */
 
-    fun getPossibleMovesForQueenChecker(chosenCheckerCellName: String): List<String> {
+    fun getPossibleMovesForQueen(chosenCheckerCellName: String): List<String> {
 
         val result = mutableListOf<String>()
-        val possibleMoves = getPotentialFurtherMovesForQueenChecker(chosenCheckerCellName)
+        val potentialMoves = getPotentialFurtherMovesForQueen(chosenCheckerCellName)
 
-        for (move in possibleMoves) {
+        for (move in potentialMoves) {
             if (Board().checkEmptyCell(move)) {
                 result.add(move)
             }
         }
 
-        return result.toList()
+        return result
     }
 
     /*
      * Check queen checker need to beat.
      */
 
-    fun checkQueenCheckerNeedToBeat(colorChecker: Int?) {
+    fun checkQueenNeedToBeat(colorChecker: Int?) {
 
         //Player queens on board
         val queensOnBoard = mutableListOf<String>()
@@ -302,7 +301,7 @@ class Game {
 
         for (queenName in queensOnBoard) {
 
-                potentialMoves = getPotentialFurtherMovesForQueenChecker(queenName)
+                potentialMoves = getPotentialFurtherMovesForQueen(queenName)
 
                 queenLetter = Converter().cellNameSeparate(queenName).first
                 queenInteger = Converter().cellNameSeparate(queenName).second
@@ -563,7 +562,7 @@ class Game {
         for (checkerName in checkersOnBoard.keys) {
             if (checkersOnBoard[checkerName]?.getColor() == checkPlayer) {
                 if (checkersOnBoard[checkerName]?.getQueenInfo() == true) {
-                    allPossibleMovesForPlayer += getPossibleMovesForQueenChecker(checkerName)
+                    allPossibleMovesForPlayer += getPossibleMovesForQueen(checkerName)
                 } else {
                     allPossibleMovesForPlayer += getPossibleMovesForDefaultChecker(checkerName, checkPlayer)
                 }
@@ -573,8 +572,6 @@ class Game {
         if (allPossibleMovesForPlayer.isEmpty()) {
             winner = player
         }
-
-        println("allPossibleMovesForPlayer : $allPossibleMovesForPlayer")
 
         return (allPossibleMovesForPlayer.isEmpty())
     }

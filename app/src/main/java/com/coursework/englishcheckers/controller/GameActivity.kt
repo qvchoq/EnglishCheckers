@@ -63,6 +63,15 @@ class GameActivity : AppCompatActivity() {
     }
 
     /*
+     * Stop all UI refreshing.
+     */
+
+    override fun onStop() {
+        super.onStop()
+        Dialog(this).dismiss()
+    }
+
+    /*
      * Move checker by touching the screen.
      */
 
@@ -93,7 +102,7 @@ class GameActivity : AppCompatActivity() {
 
                             //We check the need to beat.
                             Game().checkDefaultCheckerNeedToBeat(checkersOnBoard[prevCellName]?.getColor())
-                            Game().checkQueenCheckerNeedToBeat(checkersOnBoard[prevCellName]?.getColor())
+                            Game().checkQueenNeedToBeat(checkersOnBoard[prevCellName]?.getColor())
 
                             //We highlight the cells of the moves of the player whose turn is.
                             if (playerTurn == checkersOnBoard[prevCellName]?.getColor()) {
@@ -126,7 +135,7 @@ class GameActivity : AppCompatActivity() {
                                             Game().getPossibleMovesForDefaultChecker(prevCellName, playerTurn)
                                     } else {
                                         possibleMoves[prevCellName] =
-                                            Game().getPossibleMovesForQueenChecker(prevCellName)
+                                            Game().getPossibleMovesForQueen(prevCellName)
                                     }
                                     for ((_, moveList) in possibleMoves) {
                                         for (move in moveList) {
@@ -275,7 +284,7 @@ class GameActivity : AppCompatActivity() {
                                     if (checkersOnBoard[newCellName]?.getQueenInfo() == false) {
                                         Game().checkDefaultCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColor())
                                     } else {
-                                        Game().checkQueenCheckerNeedToBeat(checkersOnBoard[newCellName]?.getColor())
+                                        Game().checkQueenNeedToBeat(checkersOnBoard[newCellName]?.getColor())
                                     }
 
                                     if (!needToBeatMap.containsKey(newCellName) || replacedToQueen) {
