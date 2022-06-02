@@ -29,7 +29,7 @@ class GameActivity : AppCompatActivity() {
 
     private var isHoldingOnChecker = false
 
-    private var turnsWithoutBeating = 0
+    var turnsWithoutBeating = 0
 
     private var hasBeat = false
     private var hasMoved = false
@@ -51,7 +51,7 @@ class GameActivity : AppCompatActivity() {
         val container: FrameLayout = findViewById(R.id.container)
         Board().drawCheckers(container)
         Game().placeCellsOnBoard()
-        mainMoveLogic(container)
+        moveCheckerLogic(container)
     }
 
     /*
@@ -59,7 +59,7 @@ class GameActivity : AppCompatActivity() {
      */
 
     override fun onBackPressed() {
-        showDialogBackPressed()
+        showDialogByBackPressed()
     }
 
     /*
@@ -76,7 +76,7 @@ class GameActivity : AppCompatActivity() {
      */
 
     @SuppressLint("ClickableViewAccessibility")
-    fun mainMoveLogic(container: FrameLayout) {
+    fun moveCheckerLogic(container: FrameLayout) {
         var x: Int
         var y: Int
 
@@ -119,7 +119,7 @@ class GameActivity : AppCompatActivity() {
                                                 //If the selected cell is not already highlighted.
                                                 for (value in needToBeatMap[key]!!) {
                                                     if (board[value]?.getHighlightInfo() == false) {
-                                                        Board().setHighlightCell(container, value)
+                                                        Board().drawHighlightCell(container, value)
                                                     }
                                                 }
 
@@ -141,7 +141,7 @@ class GameActivity : AppCompatActivity() {
                                         for (move in moveList) {
                                             //We highlight the cells of a possible move, if you do not need to beat.
                                             if (checkersOnBoard[prevCellName]?.getColor() == playerTurn) {
-                                                Board().setHighlightCell(container, move)
+                                                Board().drawHighlightCell(container, move)
                                             }
                                         }
                                     }
@@ -326,7 +326,7 @@ class GameActivity : AppCompatActivity() {
                             mustToMoveList = mutableListOf()
 
                             //Calculate game end.
-                            endGame()
+                            endGameCalculate()
                         }
                     }
 
@@ -340,7 +340,7 @@ class GameActivity : AppCompatActivity() {
      * Show dialog box on back pressed.
      */
 
-    private fun showDialogBackPressed() {
+    private fun showDialogByBackPressed() {
         val dialog = Dialog(this)
 
         dialog.setCancelable(true)
@@ -370,7 +370,7 @@ class GameActivity : AppCompatActivity() {
      */
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun showDialogGameEnd() {
+    private fun showDialogByGameEnd() {
         val dialog = Dialog(this)
 
         dialog.setCancelable(false)
@@ -414,16 +414,16 @@ class GameActivity : AppCompatActivity() {
      * Determine whose winner.
      */
 
-    private fun endGame() {
+    fun endGameCalculate() {
 
         if (turnsWithoutBeating >= 30) {
-            showDialogGameEnd()
+            showDialogByGameEnd()
         } else {
             if (Game().endGameWithWinnerByNoPossibleMoves(playerTurn)) {
-                showDialogGameEnd()
+                showDialogByGameEnd()
             }
             if (Game().endGameWithWinnerByBeatingAllCheckers()) {
-                showDialogGameEnd()
+                showDialogByGameEnd()
             }
         }
 

@@ -1,5 +1,6 @@
 package com.coursework.englishcheckers
 
+import android.widget.FrameLayout
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 

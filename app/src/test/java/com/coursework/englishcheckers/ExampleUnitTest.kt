@@ -1,15 +1,20 @@
 package com.coursework.englishcheckers
 
+
+import com.coursework.englishcheckers.controller.GameActivity
 import com.coursework.englishcheckers.model.BoardCell
 import com.coursework.englishcheckers.model.Checker
 import com.coursework.englishcheckers.model.Converter
 import com.coursework.englishcheckers.model.Game
 import com.coursework.englishcheckers.model.Game.Companion.needToBeatMap
+import com.coursework.englishcheckers.model.Game.Companion.playerTurn
+import com.coursework.englishcheckers.model.Game.Companion.winner
 import com.coursework.englishcheckers.view.Board.Companion.board
 import com.coursework.englishcheckers.view.Board.Companion.checkersOnBoard
 import org.junit.Test
 
 import org.junit.Assert.*
+
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -507,6 +512,45 @@ class Test {
     }
 
     @Test
+    fun testClearAllData() {
+        winner = 2
+        playerTurn = 2
+        needToBeatMap["a1"] = mutableListOf("b2", "b4")
+        board["a4"] = BoardCell(1, false)
+        checkersOnBoard["a1"] = Checker(1, false, "a1")
+
+        Game().clearAllData()
+
+        assertEquals(0, winner)
+        assertEquals(1, playerTurn)
+        assertEquals(true, needToBeatMap.isEmpty())
+        assertEquals(true, board.isEmpty())
+        assertEquals(true, checkersOnBoard.isEmpty())
+    }
+
+    @Test
+    fun testTouchOnChecker() {
+        fillBoard(mapOf("a1" to 1))
+        assertEquals(true, Game().touchOnChecker(30, 460))
+        clearBoard(listOf("a1"))
+    }
+
+    @Test
+    fun testTouchOnBoard() {
+        assertEquals(true, Game().touchOnBoard(150, 800))
+        assertEquals(false, Game().touchOnBoard(150, 100))
+    }
+
+    @Test
+    fun testPlaceCellsOnBoard() {
+        Game().placeCellsOnBoard()
+        assertTrue(board["a1"] != null)
+        assertTrue(board["a8"] != null)
+        assertTrue(board["h1"] != null)
+        assertTrue(board["h8"] != null)
+    }
+
+    @Test
     fun testCoordinateToCell() {
 
         assertEquals((30 to 450), Converter().coordinateToCell(140, 460))
@@ -542,6 +586,25 @@ class Test {
         assertEquals(('c' to 3), Converter().cellNameSeparate("c3"))
         assertEquals(('f' to 6), Converter().cellNameSeparate("f6"))
         assertEquals(('e' to 8), Converter().cellNameSeparate("e8"))
+
+    }
+
+    @Test
+    fun testGetPosChecker() {
+        fillBoard(mapOf("h8" to 1, "h2" to 1, "a1" to 2))
+
+        assertEquals("h8", checkersOnBoard["h8"]?.getPos())
+        assertEquals("h2", checkersOnBoard["h2"]?.getPos())
+        assertEquals("a1", checkersOnBoard["a1"]?.getPos())
+    }
+
+    @Test
+    fun testSetAndGetHighlightCell() {
+        board["a1"] = BoardCell(1, false)
+
+        board["a1"]?.setHighlight(true)
+
+        assertTrue(board["a1"]?.getHighlightInfo() == true)
 
     }
 

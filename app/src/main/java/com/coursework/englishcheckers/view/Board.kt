@@ -76,7 +76,7 @@ class Board {
      * Draw a highlight shape.
      */
 
-    fun setHighlightCell(container: FrameLayout, cellName: String) {
+    fun drawHighlightCell(container: FrameLayout, cellName: String) {
         board[cellName]?.setHighlight(true)
 
         val cell = ImageView(container.context).apply {
@@ -98,7 +98,7 @@ class Board {
      */
 
     fun checkEmptyCell(pos: String): Boolean {
-        return (board[pos]?.getColorInfo() == 0)
+        return (board[pos]?.getColor() == 0)
     }
 
     /*
@@ -114,7 +114,7 @@ class Board {
     }
 
     /*
-     * Erase the default checker and place there queen checker.
+     * Erase the default checker and place there queen.
      */
 
     fun replaceDefaultCheckerToQueen(container: FrameLayout, checkerName: String, x: Int, y: Int): Boolean {

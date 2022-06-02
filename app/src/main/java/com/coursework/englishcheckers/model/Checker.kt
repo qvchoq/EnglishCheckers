@@ -37,7 +37,7 @@ class Checker(
         imageViewChecker.tag = newPos
     }
 
-    fun draw(container:FrameLayout, x: Int, y: Int): ImageView {
+    fun draw(container: FrameLayout, x: Int, y: Int): ImageView {
         return ImageView(container.context).apply {
             when {
                 color == 2 && !queen -> this.setImageResource(R.drawable.checker_white)

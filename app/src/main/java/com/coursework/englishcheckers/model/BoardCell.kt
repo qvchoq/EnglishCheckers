@@ -15,7 +15,7 @@ class BoardCell(
         this.colorChecker = color
     }
 
-    fun getColorInfo(): Int {
+    fun getColor(): Int {
         return this.colorChecker
     }
 
