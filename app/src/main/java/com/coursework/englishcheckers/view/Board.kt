@@ -62,7 +62,7 @@ class Board {
                 for (q in 0..3) {
                     val checker = Checker((player + 1), false, Converter().coordinateToCellName(x, y))
                     (container.context as Activity).runOnUiThread {
-                        container.addView(checker.draw(container, x, y))
+                        container.addView(CheckerView().draw(container, x, y, (player + 1), false, Converter().coordinateToCellName(x, y)))
                     }
                     checkersOnBoard[Converter().coordinateToCellName(x, y)] = checker
                     x += 260
@@ -119,13 +119,16 @@ class Board {
 
     fun replaceDefaultCheckerToQueen(container: FrameLayout, checkerName: String, x: Int, y: Int): Boolean {
         val checker = checkersOnBoard[checkerName]
+        val color = checker?.getColor()
 
         if (checker?.getColor() == 1) {
             if (checker.getPos().contains('a') && !checker.getQueenInfo()) {
                 checker.setQueen(true)
                 (container.context as Activity).runOnUiThread {
-                    container.removeView(container.findViewWithTag(checkerName))
-                    container.addView(checker.draw(container, x, y))
+                    if (color != null) {
+                        container.removeView(container.findViewWithTag(checkerName))
+                        container.addView(CheckerView().draw(container, x, y, color.toInt(), true, checkerName))
+                    }
                 }
                 return true
             }
@@ -133,8 +136,10 @@ class Board {
             if (checker.getPos().contains('h') && !checker.getQueenInfo()) {
                 checker.setQueen(true)
                 (container.context as Activity).runOnUiThread {
-                    container.removeView(container.findViewWithTag(checkerName))
-                    container.addView(checker.draw(container, x, y))
+                    if (color != null) {
+                        container.removeView(container.findViewWithTag(checkerName))
+                        container.addView(CheckerView().draw(container, x, y, color.toInt(), true, checkerName))
+                    }
                 }
                 return true
             }

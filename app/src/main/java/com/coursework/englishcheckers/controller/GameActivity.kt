@@ -29,7 +29,7 @@ class GameActivity : AppCompatActivity() {
 
     private var isHoldingOnChecker = false
 
-    var turnsWithoutBeating = 0
+    private var turnsWithoutBeating = 0
 
     private var hasBeat = false
     private var hasMoved = false
@@ -414,7 +414,7 @@ class GameActivity : AppCompatActivity() {
      * Determine whose winner.
      */
 
-    fun endGameCalculate() {
+    private fun endGameCalculate() {
 
         if (turnsWithoutBeating >= 30) {
             showDialogByGameEnd()
