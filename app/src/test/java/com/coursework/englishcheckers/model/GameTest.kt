@@ -10,7 +10,7 @@ class GameTest {
     private fun fillBoard(map: Map<String, Int>) {
         for ((key, value) in map) {
             Board.board[key] = BoardCell(value, false)
-            Board.checkersOnBoard[key] = Checker(value, false, key)
+            Board.checkersOnBoard[key] = CheckerModel(value, false, key)
         }
     }
 
@@ -525,7 +525,7 @@ class GameTest {
         Game.playerTurn = 2
         Game.needToBeatMap["a1"] = mutableListOf("b2", "b4")
         Board.board["a4"] = BoardCell(1, false)
-        Board.checkersOnBoard["a1"] = Checker(1, false, "a1")
+        Board.checkersOnBoard["a1"] = CheckerModel(1, false, "a1")
 
         Game().clearAllData()
 

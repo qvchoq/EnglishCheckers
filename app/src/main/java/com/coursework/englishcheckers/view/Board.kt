@@ -5,7 +5,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import com.coursework.englishcheckers.R
 import com.coursework.englishcheckers.model.BoardCell
-import com.coursework.englishcheckers.model.Checker
+import com.coursework.englishcheckers.model.CheckerModel
 import com.coursework.englishcheckers.model.Converter
 
 class Board {
@@ -13,7 +13,7 @@ class Board {
     companion object {
 
         var board = mutableMapOf<String, BoardCell>()
-        var checkersOnBoard = mutableMapOf<String, Checker?>()
+        var checkersOnBoard = mutableMapOf<String, CheckerModel?>()
         val cellToLetter = listOf('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
 
     }
@@ -60,11 +60,11 @@ class Board {
                 }
 
                 for (q in 0..3) {
-                    val checker = Checker((player + 1), false, Converter().coordinateToCellName(x, y))
+                    val checkerModel = CheckerModel((player + 1), false, Converter().coordinateToCellName(x, y))
                     (container.context as Activity).runOnUiThread {
                         container.addView(CheckerView().draw(container, x, y, (player + 1), false, Converter().coordinateToCellName(x, y)))
                     }
-                    checkersOnBoard[Converter().coordinateToCellName(x, y)] = checker
+                    checkersOnBoard[Converter().coordinateToCellName(x, y)] = checkerModel
                     x += 260
                 }
 

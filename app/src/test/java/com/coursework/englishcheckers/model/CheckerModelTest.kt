@@ -5,12 +5,12 @@ import org.junit.Test
 
 import org.junit.Assert.*
 
-class CheckerTest {
+class CheckerModelTest {
 
     private fun fillBoard(map: Map<String, Int>) {
         for ((key, value) in map) {
             Board.board[key] = BoardCell(value, false)
-            Board.checkersOnBoard[key] = Checker(value, false, key)
+            Board.checkersOnBoard[key] = CheckerModel(value, false, key)
         }
     }
 

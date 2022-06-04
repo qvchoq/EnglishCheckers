@@ -1,15 +1,6 @@
 package com.coursework.englishcheckers
 
 
-import com.coursework.englishcheckers.model.BoardCell
-import com.coursework.englishcheckers.model.Checker
-import com.coursework.englishcheckers.model.Converter
-import com.coursework.englishcheckers.model.Game
-import com.coursework.englishcheckers.model.Game.Companion.needToBeatMap
-import com.coursework.englishcheckers.model.Game.Companion.playerTurn
-import com.coursework.englishcheckers.model.Game.Companion.winner
-import com.coursework.englishcheckers.view.Board.Companion.board
-import com.coursework.englishcheckers.view.Board.Companion.checkersOnBoard
 import org.junit.Test
 
 import org.junit.Assert.*

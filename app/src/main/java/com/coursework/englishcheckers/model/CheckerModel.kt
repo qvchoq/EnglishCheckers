@@ -3,7 +3,7 @@ package com.coursework.englishcheckers.model
 import android.widget.FrameLayout
 import android.widget.ImageView
 
-class Checker(
+class CheckerModel(
     private val color: Int,
     private var queen: Boolean,
     private var pos: String
