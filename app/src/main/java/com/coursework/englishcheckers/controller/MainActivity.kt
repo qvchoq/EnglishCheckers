@@ -14,6 +14,5 @@ class MainActivity : AppCompatActivity() {
 
     fun startGameActivity(v: View) {
         startActivity(Intent(this, GameActivity::class.java))
-        finish()
     }
 }
