@@ -449,15 +449,19 @@ class GameTest {
 
         fillBoard(mapOf("c2" to 1,"b1" to 2))
         assertEquals(false, Game().endGameWithWinnerByBeatingAllCheckers())
+        clearBoard(listOf("c2", "b1"))
 
         fillBoard(mapOf("c2" to 0,"b1" to 0))
         assertEquals(false, Game().endGameWithWinnerByBeatingAllCheckers())
+        clearBoard(listOf("c2", "b1"))
 
         fillBoard(mapOf("c2" to 1,"b1" to 0))
         assertEquals(true, Game().endGameWithWinnerByBeatingAllCheckers())
+        clearBoard(listOf("c2", "b1"))
 
         fillBoard(mapOf("c2" to 2,"b1" to 0))
         assertEquals(true, Game().endGameWithWinnerByBeatingAllCheckers())
+        clearBoard(listOf("c2", "b1"))
     }
 
     @Test
