@@ -346,6 +346,8 @@ class GameActivity : AppCompatActivity() {
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.layout_backpressed_dialog)
 
+        dialog.show()
+
         val yesButton = dialog.findViewById<Button>(R.id.dialog_warning_yes_btn)
 
         yesButton.setOnClickListener {
@@ -361,7 +363,6 @@ class GameActivity : AppCompatActivity() {
         noButton.setOnClickListener {
             dialog.dismiss()
         }
-        dialog.show()
     }
 
 
@@ -390,6 +391,8 @@ class GameActivity : AppCompatActivity() {
             }
         }
 
+        dialog.show()
+
         val restartButton = dialog.findViewById<Button>(R.id.dialog_button_restart)
 
         restartButton.setOnClickListener {
@@ -397,6 +400,7 @@ class GameActivity : AppCompatActivity() {
             finish()
             Game().clearAllData()
             startActivity(intent)
+
         }
 
         val menuButton = dialog.findViewById<Button>(R.id.dialog_button_menu)
@@ -407,7 +411,7 @@ class GameActivity : AppCompatActivity() {
             Game().clearAllData()
             startActivity(Intent(this, MainActivity::class.java))
         }
-        dialog.show()
+
     }
 
     /*
